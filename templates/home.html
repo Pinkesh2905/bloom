@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f6f9fc, #e0eafc);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .home-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 2rem;
+    }
+
+    .header-section {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    .header-section h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-section p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        animation: fadeInUp 1s ease-in-out;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .feature-card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .quote-box {
+        background: #dbeafe;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+        text-align: center;
+        font-style: italic;
+        font-size: 1.1rem;
+        animation: fadeIn 1.2s;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<div class="home-container">
+    <div class="header-section">
+        <h1>Welcome to Bloom 🌿</h1>
+        <p>Your mental wellness starts here. Track your mood, write journals, chat with our bot, and stay connected to positivity!</p>
+    </div>
+
+    <div class="quote-box">
+        🌟 {{ random_quote }}
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <h3>Mood Tracker</h3>
+            <p>Keep tabs on how you feel every day and gain insights over time to boost your emotional awareness.</p>
+            <a href="{% url 'mood_tracker' %}">Track Mood →</a>
+        </div>
+
+        <div class="feature-card">
+            <h3>Bloom Bot 🤖</h3>
+            <p>Feeling low? Chat with Bloom Bot for supportive, uplifting conversation and a touch of AI-powered comfort.</p>
+            <a href="{% url 'chatbot_home' %}">Start Chatting →</a>
+        </div>
+
+        <div class="feature-card">
+            <h3>Journal</h3>
+            <p>Write your thoughts and experiences to reflect and improve mental clarity.</p>
+            <a href="{% url 'journal_list' %}">Write a Journal →</a>
+        </div>
+
+        <div class="feature-card">
+            <h3>Therapists 🧑‍⚕️</h3>
+            <p>Connect with professional therapists, read tips, and book sessions to support your mental health journey.</p>
+            <a href="{% url 'therapist_list' %}">Meet Therapists →</a>
+        </div>        
+
+        <div class="feature-card">
+            <h3>Insights</h3>
+            <p>View mood trends, journaling activity, and chatbot usage insights to track your wellness journey.</p>
+            <a href="{% url 'insights_home' %}">View Insights →</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

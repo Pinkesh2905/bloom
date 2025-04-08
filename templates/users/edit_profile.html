@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .edit-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .edit-container h2 {
+    text-align: center;
+    color: #4CAF50;
+    margin-bottom: 25px;
+  }
+  form input, form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+  form button {
+    background: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  form button:hover {
+    background: #45a049;
+  }
+</style>
+
+<div class="edit-container">
+  <h2>Edit Profile</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ u_form.as_p }}
+    {{ p_form.as_p }}
+    <button type="submit">Update Profile</button>
+  </form>
+</div>
+{% endblock %}

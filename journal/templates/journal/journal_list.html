@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .journal-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .journal-entry {
+        border-bottom: 1px solid #ddd;
+        padding: 1rem 0;
+    }
+
+    .journal-entry:last-child {
+        border-bottom: none;
+    }
+
+    .journal-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .journal-content {
+        margin-top: 0.5rem;
+        color: #555;
+    }
+
+    .journal-meta {
+        font-size: 0.9rem;
+        color: #999;
+        margin-top: 0.3rem;
+    }
+
+    .actions a {
+        margin-right: 1rem;
+        text-decoration: none;
+        color: #0077cc;
+    }
+
+    .actions a:hover {
+        text-decoration: underline;
+    }
+
+    .add-btn {
+        display: inline-block;
+        margin-top: 1.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #6c63ff;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    .add-btn:hover {
+        background-color: #5a52e0;
+    }
+</style>
+
+<div class="journal-container">
+    <h2>📝 My Journal Entries</h2>
+
+    {% for entry in entries %}
+        <div class="journal-entry">
+            <div class="journal-title">{{ entry.title }}</div>
+            <div class="journal-content">{{ entry.content }}</div>
+            <div class="journal-meta">
+                Created: {{ entry.date_created|date:"M d, Y H:i" }} <br>
+                
+                {% if entry.date_updated != entry.date_created %}
+                    Last Updated: {{ entry.date_updated|date:"M d, Y H:i" }}
+                {% endif %}
+            </div>
+            <div class="actions">
+                <a href="{% url 'journal_edit' entry.pk %}">Edit</a>
+                <a href="{% url 'journal_delete' entry.pk %}">Delete</a>
+            </div>
+        </div>
+    {% empty %}
+        <p>No journal entries yet.</p>
+    {% endfor %}
+
+    <a class="add-btn" href="{% url 'journal_create' %}">➕ Add New Entry</a>
+</div>
+
+{% endblock %}

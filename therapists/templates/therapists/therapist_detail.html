@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 30px;
+    }
+
+    .therapist-card {
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .therapist-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 30px;
+    }
+
+    .therapist-info {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .therapist-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .therapist-specialization,
+    .therapist-experience,
+    .therapist-bio,
+    .therapist-availability {
+      font-size: 16px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .therapist-availability {
+      color: #ff6347;
+    }
+
+    .appointment-form {
+      margin-top: 30px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .appointment-form input,
+    .appointment-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .appointment-form button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .appointment-form button:hover {
+      background-color: #45a049;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h3 {
+      margin-top: 40px;
+      color: #333;
+      font-size: 22px;
+    }
+  </style>
+
+  <div class="container">
+    <div class="therapist-card">
+      <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" class="therapist-image">
+      <div class="therapist-info">
+        <h2 class="therapist-name">{{ therapist.name }}</h2>
+        <p class="therapist-specialization"><strong>Specialization:</strong> {{ therapist.specialization }}</p>
+        <p class="therapist-experience"><strong>Experience:</strong> {{ therapist.experience }} years</p>
+        <p class="therapist-bio"><strong>Bio:</strong> {{ therapist.bio }}</p>
+        <p class="therapist-availability"><strong>Availability:</strong> {% if therapist.is_available %}Available{% else %}Not Available{% endif %}</p>
+      </div>
+    </div>
+
+    <h3>Book an Appointment</h3>
+    <form class="appointment-form" method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          {{ field.label_tag }}<br>
+          {{ field }}
+          {% if field.errors %}
+            <div style="color: red;">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <button type="submit">Book Appointment</button>
+    </form>
+  </div>
+{% endblock %}

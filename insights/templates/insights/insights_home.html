@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Insights Page Styles -->
+<style>
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #333;
+    }
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+    .card {
+        flex: 1 1 250px;
+        background: linear-gradient(135deg, #89f7fe, #66a6ff);
+        border-radius: 15px;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .card h2 {
+        margin: 10px 0;
+        font-size: 2.5rem;
+    }
+    canvas {
+        max-width: 500px;
+        margin: 30px auto;
+    }
+    .recent-activity {
+        margin-top: 40px;
+    }
+    .activity-item {
+        background: #f0f4ff;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-left: 6px solid #66a6ff;
+        border-radius: 8px;
+    }
+    .activity-item strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #444;
+    }
+</style>
+
+<div class="container">
+    <h1>🌸 Your Wellness Insights</h1>
+
+    <div class="cards">
+        <div class="card">
+            <h2>{{ mood_count }}</h2>
+            <p>Total Mood Entries</p>
+        </div>
+        <div class="card">
+            <h2>{{ journal_count }}</h2>
+            <p>Journal Entries</p>
+        </div>
+        <div class="card">
+            <h2>{{ user_msg_count }}</h2>
+            <p>Your Messages</p>
+        </div>
+        <div class="card">
+            <h2>{{ bot_msg_count }}</h2>
+            <p>Bot Replies</p>
+        </div>
+    </div>
+
+    <canvas id="moodChart"></canvas>
+
+    <div class="recent-activity">
+        <h2>🕓 Recent Activity</h2>
+        {% if latest_mood %}
+            <div class="activity-item">
+                <strong>Last Mood:</strong>
+                {{ latest_mood.mood }} ({{ latest_mood.timestamp|date:"M d, Y H:i" }})
+            </div>
+        {% endif %}
+        {% if journal_count > 0 %}
+            <div class="activity-item">
+                <strong>Latest Journal Entry:</strong>
+                {{ journal_entries.last.title }} ({{ journal_entries.last.created_at|date:"M d, Y" }})
+            </div>
+        {% endif %}
+        {% if user_msg_count > 0 %}
+            <div class="activity-item">
+                <strong>Last Message to Bot:</strong>
+                {{ chat_messages.last.message|truncatechars:60 }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const moodData = {{ mood_data|safe }};
+    const moodLabels = moodData.map(entry => entry.mood);
+    const moodCounts = moodData.map(entry => entry.count || 1);
+
+    const ctx = document.getElementById('moodChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: moodLabels,
+            datasets: [{
+                data: moodCounts,
+                backgroundColor: ['#f77fbe', '#7ed6df', '#f6e58d', '#ffbe76', '#e056fd', '#badc58']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                title: {
+                    display: true,
+                    text: 'Mood Distribution',
+                    font: { size: 20 }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

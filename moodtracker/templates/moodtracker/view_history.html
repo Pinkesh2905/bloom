@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Mood History</title>
+    <style>
+        body {
+            background: #eef2f3;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            color: #444;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .entry {
+            border-bottom: 1px solid #ccc;
+            padding: 15px 0;
+        }
+        .entry:last-child {
+            border-bottom: none;
+        }
+        .mood {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .note {
+            margin: 5px 0;
+            color: #666;
+        }
+        .date {
+            font-size: 14px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Mood History</h2>
+        {% for mood in moods %}
+        <div class="entry">
+            <div class="mood">Mood: {{ mood.get_mood_display }}</div>
+            {% if mood.note %}
+                <div class="note">{{ mood.note }}</div>
+            {% endif %}
+            <div class="date">{{ mood.date|date:"F d, Y - h:i A" }}</div>
+        </div>
+        {% empty %}
+        <p style="text-align:center;">No mood entries yet. Try submitting one!</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

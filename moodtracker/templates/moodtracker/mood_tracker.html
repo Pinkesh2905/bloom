@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .mood-wrapper {
+    max-width: 700px;
+    margin: auto;
+    margin-top: 50px;
+    padding: 25px;
+    background: #fff0f5; /* default */
+    border-radius: 15px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", sans-serif;
+    transition: background 0.5s ease-in-out;
+  }
+
+  .mood-wrapper h2,
+  .mood-wrapper h3 {
+    text-align: center;
+    color: #e75480;
+  }
+
+  .mood-form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .radio-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .radio-options input[type="radio"] {
+    display: none;
+  }
+
+  .radio-options label {
+    background: #ffe4ec;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .radio-options input[type="radio"]:checked + label {
+    border-color: #e75480;
+    background: #fdd6e3;
+    font-weight: bold;
+  }
+
+  textarea {
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  .submit-btn {
+    background: #e75480;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .submit-btn:hover {
+    background: #c9436d;
+  }
+
+  .mood-history {
+    margin-top: 40px;
+    background: #fdf4f8;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .mood-entry {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+
+<div class="mood-wrapper" id="moodCard">
+  <h2>🧠 Mood Tracker</h2>
+
+  <form method="POST" class="mood-form">
+    {% csrf_token %}
+
+    <div class="radio-options">
+      {% for val, label in form.mood.field.choices %}
+      <input
+        type="radio"
+        name="mood"
+        value="{{ val }}"
+        id="mood_{{ forloop.counter }}"
+        onchange="changeMood('{{ val }}')"
+        required
+      />
+      <label for="mood_{{ forloop.counter }}">{{ label }}</label>
+      {% endfor %}
+    </div>
+    <br />
+    <label for="id_note">📝 Add a note (optional):</label><br />
+    {{ form.note }}
+
+    <button type="submit" class="submit-btn">🌟 Submit Mood</button>
+  </form>
+
+  <div class="mood-history">
+    <h3>📅 Recent Moods</h3>
+    {% if mood_history %}
+      {% for entry in mood_history %}
+      <div class="mood-entry">
+        <strong>{{ entry.timestamp|date:"d M Y, H:i" }}</strong> — {{ entry.get_mood_display }}
+        {% if entry.note %}
+          <br />🗒️ <em>{{ entry.note }}</em>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+    <p>No mood entries yet. Start tracking how you feel today 🌞</p>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  function changeMood(mood) {
+    const card = document.getElementById('moodCard');
+    const colors = {
+      'happy': '#fffacd',        // light yellow 😊
+      'sad': '#dbe9f4',          // light blue 😢
+      'anxious': '#fdebd0',      // peach 😟
+      'angry': '#f8d7da',        // light red 😠
+      'relaxed': '#d4edda',      // light green 😌
+      'excited': '#e0bbff',      // lavender 😄
+      'tired': '#f0f0f0',        // soft grey 😴
+      'neutral': '#f5f5dc'       // beige 😐
+    };
+    card.style.backgroundColor = colors[mood.toLowerCase()] || '#fff0f5';
+  }
+</script>
+{% endblock %}
