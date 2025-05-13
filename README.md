@@ -1,0 +1,1 @@
+This is a mental wellness app to refresh your mind, chat with chatbot, track the mood, book appointments with therapists and many more!
