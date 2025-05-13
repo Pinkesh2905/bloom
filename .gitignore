@@ -2,7 +2,12 @@
 __pycache__/
 db.sqlite3
 .env
-/media
+# Ignore all media files
+/media/*
+# BUT keep default profile image and therapist images
+!media/default.jpg
+!media/therapists/
+!media/profile_pics/.keep
 /staticfiles
 .env*
 *.log
