@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-rm%%lel*cnmz5=#kv2q#@qx-%4m-3k@c-=8$i^45d5orf6@l)v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['bloom-pwns.onrender.com', 'localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['bloom-pwns.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['bloom-qug6.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 
