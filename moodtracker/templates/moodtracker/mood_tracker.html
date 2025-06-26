@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <style>
   .mood-wrapper {
@@ -134,22 +135,24 @@
 
     <div class="radio-options">
       {% for val, label in form.mood.field.choices %}
-      <input
-        type="radio"
-        name="mood"
-        value="{{ val }}"
-        id="mood_{{ forloop.counter }}"
-        onchange="changeMood('{{ val }}')"
-        required
-      />
-      <label for="mood_{{ forloop.counter }}">
-        {{ mood_icons[val|lower] }} {{ label }}
-      </label>
+        <input
+          type="radio"
+          name="mood"
+          value="{{ val }}"
+          id="mood_{{ forloop.counter }}"
+          onchange="changeMood('{{ val }}')"
+          required
+        />
+        <label for="mood_{{ forloop.counter }}">
+          {% with val|lower as mood_key %}
+            {{ mood_icons.mood_key }} {{ label }}
+          {% endwith %}
+        </label>
       {% endfor %}
     </div>
 
     <label for="id_note">📝 Add a note (optional):</label>
-    {{ form.note|add_class:"form-control" }}
+    {{ form.note }}
     <script>
       document.getElementById("id_note").placeholder = "e.g., Felt really great after a walk, or tired from work...";
     </script>
@@ -161,15 +164,18 @@
     <h3>📅 Recent Moods</h3>
     {% if mood_history %}
       {% for entry in mood_history %}
-      <div class="mood-entry">
-        <strong>{{ entry.timestamp|date:"d M Y, H:i" }}</strong> — {{ mood_icons[entry.mood|lower] }} {{ entry.get_mood_display }}
-        {% if entry.note %}
-          <br />🗒️ <em>{{ entry.note }}</em>
-        {% endif %}
-      </div>
+        <div class="mood-entry">
+          <strong>{{ entry.timestamp|date:"d M Y, H:i" }}</strong> —
+          {% with entry.mood|lower as mood_key %}
+            {{ mood_icons.mood_key }} {{ entry.get_mood_display }}
+          {% endwith %}
+          {% if entry.note %}
+            <br />🗒️ <em>{{ entry.note }}</em>
+          {% endif %}
+        </div>
       {% endfor %}
     {% else %}
-    <p>No mood entries yet. Start tracking how you feel today 🌞</p>
+      <p>No mood entries yet. Start tracking how you feel today 🌞</p>
     {% endif %}
   </div>
 </div>
