@@ -61,61 +61,72 @@
   }
 
   #input-area {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
     padding: 1rem;
     border-top: 1px solid #ddd;
     background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  #message-input {
-    flex: 1 1 100%;
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .input-row input {
+    flex: 1;
     padding: 0.8rem;
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 1rem;
   }
 
-  button {
+  #emoji-picker {
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+
+  .button-row button {
+    flex: 1 1 30%;
     padding: 0.6rem 1rem;
     border: none;
     border-radius: 6px;
     background-color: #7f5af0;
     color: white;
     cursor: pointer;
-    flex: 1;
-    min-width: 100px;
+    min-width: 90px;
   }
 
-  button:hover {
+  .button-row button:hover {
     background-color: #6b46e2;
   }
 
-  #emoji-picker {
-    font-size: 1.4rem;
-    cursor: pointer;
-    align-self: center;
-    margin-left: 0.5rem;
-  }
-
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     .chat-container {
       margin: 10px;
       height: 90vh;
     }
 
-    #input-area {
-      flex-direction: column;
-      padding: 0.8rem;
+    .input-row {
+      flex-direction: row;
     }
 
-    button {
-      width: 90%;
+    .input-row input {
+      width: 100%;
     }
 
-    #message-input {
-      width: 90%;
+    .button-row button {
+      flex: 1 1 100%;
     }
   }
 </style>
@@ -126,11 +137,15 @@
   <div id="typing-indicator"></div>
 
   <div id="input-area">
-    <input type="text" id="message-input" placeholder="Type your message...">
-    <div id="emoji-picker">😀</div>
-    <button onclick="startVoiceInput()">🎤</button>
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="clearChat()">Clear</button>
+    <div class="input-row">
+      <input type="text" id="message-input" placeholder="Type your message...">
+      <div id="emoji-picker">😀</div>
+    </div>
+    <div class="button-row">
+      <button onclick="startVoiceInput()">🎤</button>
+      <button onclick="sendMessage()">Send</button>
+      <button onclick="clearChat()">Clear</button>
+    </div>
   </div>
 </div>
 
