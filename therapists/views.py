@@ -5,6 +5,7 @@ from django.contrib import messages
 from .forms import AppointmentForm
 from datetime import datetime, time as time_obj
 from django.views.decorators.http import require_POST
+from datetime import date
 
 def therapist_list(request):
     therapists = Therapist.objects.all()
@@ -37,7 +38,7 @@ def therapist_detail(request, pk):
 def user_appointments(request):
     now = datetime.now()
     appointments = Appointment.objects.filter(user=request.user)
-
+    
     upcoming_appointments = []
 
     for appointment in appointments:
@@ -46,7 +47,7 @@ def user_appointments(request):
         if appointment_datetime > now:
             upcoming_appointments.append(appointment)
 
-    return render(request, 'therapists/user_appointments.html', {'appointments': upcoming_appointments})
+    return render(request, 'therapists/user_appointments.html', {'appointments': upcoming_appointments, 'today': date.today()})
 
 
 @login_required

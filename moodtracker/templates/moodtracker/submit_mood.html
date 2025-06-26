@@ -3,52 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <title>Submit Your Mood</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             background: linear-gradient(to right, #fceabb, #f8b500);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 40px;
+            padding: 30px 20px;
+            margin: 0;
             color: #333;
         }
+
         .container {
             max-width: 500px;
             margin: auto;
-            background: white;
-            padding: 30px;
+            background: #fff;
+            padding: 30px 25px;
             border-radius: 20px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
+
         h2 {
             text-align: center;
             margin-bottom: 25px;
+            color: #f39c12;
         }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea, select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus, select:focus, input:focus {
+            border-color: #f8b500;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: #aaa;
+        }
+
         button {
-            padding: 10px 25px;
+            padding: 12px;
             background-color: #f8b500;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: white;
             cursor: pointer;
-            width: 100%;
-            font-size: 16px;
+            font-size: 17px;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
             background-color: #e6a200;
         }
-        textarea, select {
-            margin-bottom: 15px;
-            width: 100%;
-            font-size: 16px;
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>How Are You Feeling Today?</h2>
+        <h2>🌈 How Are You Feeling Today?</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Submit Mood</button>
+            <button type="submit">📤 Submit Mood</button>
         </form>
     </div>
 </body>

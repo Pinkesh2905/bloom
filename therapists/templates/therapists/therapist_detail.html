@@ -3,16 +3,21 @@
 {% block content %}
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f9f9f9;
-      padding: 30px;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     .therapist-card {
       background-color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+      border-radius: 10px;
+      padding: 25px;
       margin-bottom: 30px;
       display: flex;
       flex-wrap: wrap;
@@ -25,6 +30,8 @@
       border-radius: 50%;
       object-fit: cover;
       margin-right: 30px;
+      margin-bottom: 20px;
+      border: 4px solid #e0e0e0;
     }
 
     .therapist-info {
@@ -38,7 +45,18 @@
       color: #4CAF50;
     }
 
-    .therapist-specialization,
+    .therapist-specialization {
+      font-size: 16px;
+      color: #555;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .therapist-specialization i {
+      margin-right: 8px;
+    }
+
     .therapist-experience,
     .therapist-bio,
     .therapist-availability {
@@ -48,25 +66,33 @@
     }
 
     .therapist-availability {
-      color: #ff6347;
+      color: #d6336c;
+    }
+
+    h3 {
+      margin-top: 40px;
+      color: #333;
+      font-size: 22px;
     }
 
     .appointment-form {
-      margin-top: 30px;
+      margin-top: 20px;
       background-color: white;
       padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
     }
 
     .appointment-form input,
-    .appointment-form textarea {
+    .appointment-form textarea,
+    .appointment-form select {
       width: 100%;
       padding: 12px;
-      margin: 15px 0;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
     }
 
     .appointment-form button {
@@ -74,24 +100,53 @@
       color: white;
       padding: 12px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
     }
 
     .appointment-form button:hover {
       background-color: #45a049;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+    .review-section {
+      margin-top: 40px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
     }
 
-    h3 {
-      margin-top: 40px;
-      color: #333;
-      font-size: 22px;
+    .review {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .review:last-child {
+      border-bottom: none;
+    }
+
+    .stars {
+      color: #FFD700;
+    }
+
+    @media (max-width: 768px) {
+      .therapist-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .therapist-image {
+        margin-right: 0;
+      }
+
+      h3 {
+        text-align: center;
+        font-size: 20px;
+      }
     }
   </style>
 
@@ -100,10 +155,19 @@
       <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" class="therapist-image">
       <div class="therapist-info">
         <h2 class="therapist-name">{{ therapist.name }}</h2>
-        <p class="therapist-specialization"><strong>Specialization:</strong> {{ therapist.specialization }}</p>
+        <p class="therapist-specialization">
+          <i class="fas fa-user-md"></i>
+          <strong>Specialization:</strong> {{ therapist.specialization }}
+        </p>
         <p class="therapist-experience"><strong>Experience:</strong> {{ therapist.experience }} years</p>
         <p class="therapist-bio"><strong>Bio:</strong> {{ therapist.bio }}</p>
-        <p class="therapist-availability"><strong>Availability:</strong> {% if therapist.is_available %}Available{% else %}Not Available{% endif %}</p>
+        <p class="therapist-availability"><strong>Availability:</strong>
+          {% if therapist.is_available %}
+            <span style="color: green;">Available</span>
+          {% else %}
+            <span style="color: red;">Not Available</span>
+          {% endif %}
+        </p>
       </div>
     </div>
 
@@ -119,7 +183,32 @@
           {% endif %}
         </div>
       {% endfor %}
+      <label for="slot">Choose a Slot:</label>
+      <select name="slot" id="slot">
+        <option>10:00 AM - 10:30 AM</option>
+        <option>11:00 AM - 11:30 AM</option>
+        <option>2:00 PM - 2:30 PM</option>
+        <option>4:00 PM - 4:30 PM</option>
+      </select>
       <button type="submit">Book Appointment</button>
     </form>
+
+    <div class="review-section">
+      <h3>🌟 Patient Reviews</h3>
+      <div class="review">
+        <strong>Aarav M.</strong> <span class="stars">★★★★★</span>
+        <p>Dr. {{ therapist.name }} helped me feel heard and supported. Highly recommend!</p>
+      </div>
+      <div class="review">
+        <strong>Saanvi K.</strong> <span class="stars">★★★★☆</span>
+        <p>Very professional and empathetic. Great experience overall.</p>
+      </div>
+      <div class="review">
+        <strong>Yash R.</strong> <span class="stars">★★★★★</span>
+        <p>She helped me through my anxiety issues. Truly thankful!</p>
+      </div>
+    </div>
   </div>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}

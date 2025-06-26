@@ -11,19 +11,52 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     font-family: 'Segoe UI', sans-serif;
   }
+
   .login-container h2 {
     text-align: center;
     color: #4CAF50;
     margin-bottom: 25px;
+    font-size: 2rem;
   }
+
+  .login-container .errorlist {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 10px;
+  }
+
   form input {
     width: 100%;
     padding: 12px;
-    margin: 10px 0 20px 0;
+    margin-bottom: 15px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 15px;
+    box-sizing: border-box;
   }
+
+  .show-password {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: #555;
+  }
+
+  .show-password input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
   button {
     width: 100%;
     background-color: #4CAF50;
@@ -34,8 +67,46 @@
     cursor: pointer;
     font-size: 16px;
   }
+
   button:hover {
     background-color: #45a049;
+  }
+
+  .signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95rem;
+  }
+
+  .signup-link a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .login-container {
+      margin: 20px 10px;
+      padding: 20px;
+    }
+
+    .login-container h2 {
+      font-size: 1.6rem;
+    }
+
+    form input {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      font-size: 15px;
+      padding: 10px;
+    }
   }
 </style>
 
@@ -43,8 +114,35 @@
   <h2>Login</h2>
   <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      {{ field.label_tag }}
+      {{ field.errors }}
+      {% if field.name == "username" %}
+        <input type="text" name="{{ field.name }}" value="{{ field.value|default:'' }}" placeholder="Enter your username" autofocus required>
+      {% elif field.name == "password" %}
+        <input type="password" name="{{ field.name }}" placeholder="Enter your password" id="password-input" required>
+      {% else %}
+        {{ field }}
+      {% endif %}
+    {% endfor %}
+
+    <div class="show-password">
+      <input type="checkbox" id="togglePassword"> <label for="togglePassword">Show Password</label>
+    </div>
+
     <button type="submit">Login</button>
   </form>
+
+  <div class="signup-link">
+    Don’t have an account? <a href="{% url 'signup' %}">Sign up here</a>
+  </div>
 </div>
+
+<script>
+  document.getElementById("togglePassword").addEventListener("change", function () {
+    const passwordInput = document.getElementById("password-input");
+    passwordInput.type = this.checked ? "text" : "password";
+  });
+</script>
 {% endblock %}

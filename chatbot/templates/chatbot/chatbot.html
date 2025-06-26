@@ -2,222 +2,250 @@
 
 {% block content %}
 <style>
-    #chat-box {
-        flex: 1;
-        padding: 1rem;
-        overflow-y: auto;
-        max-height: 60vh;
-    }
+  .chat-container {
+    margin: 20px auto;
+    max-width: 800px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+  }
 
-    .message {
-        max-width: 70%;
-        margin: 0.5rem 0;
-        padding: 0.8rem;
-        border-radius: 12px;
-        line-height: 1.4;
-    }
+  h2 {
+    text-align: center;
+    padding-top: 20px;
+    color: #555;
+    font-size: 1.8rem;
+  }
 
-    .user {
-        background: #ffffff;
-        align-self: flex-end;
-        margin-left: auto;
-        border: 1px solid #ccc;
-    }
+  .chat-wrapper {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .bot {
-        background: #e0e7ff;
-        align-self: flex-start;
-        margin-right: auto;
-        border: 1px solid #ccc;
-    }
+  .message {
+    max-width: 70%;
+    margin: 0.5rem 0;
+    padding: 0.8rem;
+    border-radius: 12px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
 
-    #typing-indicator {
-        font-style: italic;
-        color: gray;
-        margin-top: 5px;
+  .user {
+    background: #ffffff;
+    align-self: flex-end;
+    margin-left: auto;
+    border: 1px solid #ccc;
+  }
+
+  .bot {
+    background: #e0e7ff;
+    align-self: flex-start;
+    margin-right: auto;
+    border: 1px solid #ccc;
+  }
+
+  #typing-indicator {
+    font-style: italic;
+    color: gray;
+    padding-left: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  #input-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    background: white;
+  }
+
+  #message-input {
+    flex: 1 1 100%;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #7f5af0;
+    color: white;
+    cursor: pointer;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  button:hover {
+    background-color: #6b46e2;
+  }
+
+  #emoji-picker {
+    font-size: 1.4rem;
+    cursor: pointer;
+    align-self: center;
+    margin-left: 0.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .chat-container {
+      margin: 10px;
+      height: 90vh;
     }
 
     #input-area {
-        display: flex;
-        padding: 1rem;
-        border-top: 1px solid #ddd;
-        background: white;
-    }
-
-    #message-input {
-        flex: 1;
-        padding: 0.8rem;
-        border-radius: 6px;
-        border: 1px solid #ccc;
+      flex-direction: column;
+      padding: 0.8rem;
     }
 
     button {
-        margin-left: 0.5rem;
-        padding: 0.8rem 1rem;
-        border: none;
-        border-radius: 6px;
-        background-color: #7f5af0;
-        color: white;
-        cursor: pointer;
+      width: 100%;
     }
 
-    button:hover {
-        background-color: #6b46e2;
+    #message-input {
+      width: 100%;
     }
-
-    #emoji-picker {
-        font-size: 1.2rem;
-        cursor: pointer;
-        margin-left: 0.5rem;
-    }
-
-    .chat-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chat-container {
-        margin: 20px auto;
-        max-width: 800px;
-        background: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-
-    h2 {
-        text-align: center;
-        padding-top: 20px;
-        color: #555;
-    }
+  }
 </style>
 
 <div class="chat-container">
-    <h2>Bloom Bot — Your Mood Mate</h2>
-    <div id="chat-box" class="chat-wrapper"></div>
-    <div id="typing-indicator"></div>
+  <h2>Bloom Bot — Your Mood Mate</h2>
+  <div id="chat-box" class="chat-wrapper"></div>
+  <div id="typing-indicator"></div>
 
-    <div id="input-area">
-        <input type="text" id="message-input" placeholder="Type your message... ">
-        <div id="emoji-picker">😀</div>
-        <button onclick="startVoiceInput()">🎤</button>
-        <button onclick="sendMessage()">Send</button>
-        <button onclick="clearChat()">Clear</button>
-    </div>
+  <div id="input-area">
+    <input type="text" id="message-input" placeholder="Type your message...">
+    <div id="emoji-picker">😀</div>
+    <button onclick="startVoiceInput()">🎤</button>
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="clearChat()">Clear</button>
+  </div>
 </div>
 
 <script>
-    const chatBox = document.getElementById('chat-box');
-    const messageInput = document.getElementById('message-input');
-    const typingIndicator = document.getElementById('typing-indicator');
+  const chatBox = document.getElementById('chat-box');
+  const messageInput = document.getElementById('message-input');
+  const typingIndicator = document.getElementById('typing-indicator');
 
-    window.onload = function () {
-        fetch('/chat/history/')
-            .then(response => response.json())
-            .then(data => {
-                data.messages.forEach(msg => {
-                    addMessage(msg.sender, msg.message);
-                });
-                scrollToBottom();
-            });
+  window.onload = function () {
+    fetch('/chat/history/')
+      .then(response => response.json())
+      .then(data => {
+        data.messages.forEach(msg => {
+          addMessage(msg.sender, msg.message);
+        });
+        scrollToBottom();
+      });
+  };
+
+  function addMessage(sender, message) {
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender);
+    msgDiv.textContent = message;
+    chatBox.appendChild(msgDiv);
+  }
+
+  function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    addMessage('user', message);
+    messageInput.value = '';
+    typingIndicator.textContent = "Bloom Bot is typing...";
+
+    fetch('/chat/send/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      },
+      body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+      typingIndicator.textContent = '';
+      addMessage('bot', data.reply);
+      scrollToBottom();
+      speak(data.reply);
+    });
+  }
+
+  function getCSRFToken() {
+    let cookieValue = null;
+    const name = 'csrftoken';
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function clearChat() {
+    fetch('/chat/clear/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCSRFToken()
+      }
+    }).then(() => {
+      chatBox.innerHTML = '';
+    });
+  }
+
+  function startVoiceInput() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+    recognition.onresult = function (event) {
+      const speechResult = event.results[0][0].transcript;
+      messageInput.value = speechResult;
     };
+    recognition.onerror = function (event) {
+      alert('Voice input error: ' + event.error);
+    };
+  }
 
-    function addMessage(sender, message) {
-        const msgDiv = document.createElement('div');
-        msgDiv.classList.add('message', sender);
-        msgDiv.textContent = message;
-        chatBox.appendChild(msgDiv);
+  function speak(message) {
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'en-US';
+    window.speechSynthesis.speak(utterance);
+  }
+
+  document.getElementById('emoji-picker').addEventListener('click', () => {
+    const emojis = ['😊', '😂', '❤️', '😔', '😎', '🙌', '🌸'];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    messageInput.value += randomEmoji;
+    messageInput.focus();
+  });
+
+  messageInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      sendMessage();
     }
-
-    function scrollToBottom() {
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message) return;
-
-        addMessage('user', message);
-        messageInput.value = '';
-        typingIndicator.textContent = "Bloom Bot is typing...";
-
-        fetch('/chat/send/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken()
-            },
-            body: JSON.stringify({ message: message })
-        })
-        .then(response => response.json())
-        .then(data => {
-            typingIndicator.textContent = '';
-            addMessage('bot', data.reply);
-            scrollToBottom();
-            speak(data.reply);
-        });
-    }
-
-    function getCSRFToken() {
-        let cookieValue = null;
-        const name = 'csrftoken';
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    function clearChat() {
-        fetch('/chat/clear/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken()
-            }
-        }).then(() => {
-            chatBox.innerHTML = '';
-        });
-    }
-
-    function startVoiceInput() {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.start();
-        recognition.onresult = function (event) {
-            const speechResult = event.results[0][0].transcript;
-            messageInput.value = speechResult;
-        };
-        recognition.onerror = function (event) {
-            alert('Voice input error: ' + event.error);
-        };
-    }
-
-    function speak(message) {
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-    }
-
-    document.getElementById('emoji-picker').addEventListener('click', () => {
-        const emojis = ['😊', '😂', '❤️', '😔', '😎', '🙌', '🌸'];
-        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-        messageInput.value += randomEmoji;
-        messageInput.focus();
-    });
-
-    messageInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
+  });
 </script>
 {% endblock %}

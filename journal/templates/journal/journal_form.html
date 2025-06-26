@@ -2,73 +2,103 @@
 {% block content %}
 
 <style>
+  .form-container {
+    max-width: 720px;
+    margin: 3rem auto;
+    padding: 2rem 2.5rem;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .form-container h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.8rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="text"],
+  textarea {
+    padding: 0.8rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+  }
+
+  input[type="text"]:focus,
+  textarea:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  button {
+    background-color: #10b981;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #059669;
+  }
+
+  .back-link {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .back-link a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
     .form-container {
-        max-width: 700px;
-        margin: auto;
-        padding: 2rem;
-        background: #fff;
-        border-radius: 15px;
-        box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+      padding: 1.5rem 1.2rem;
     }
 
     .form-container h2 {
-        margin-bottom: 1.5rem;
-        text-align: center;
+      font-size: 1.6rem;
     }
-
-    form {
-        display: flex;
-        flex-direction: column;
-    }
-
-    input[type="text"], textarea {
-        padding: 0.75rem;
-        margin-bottom: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        font-size: 1rem;
-    }
-
-    button {
-        background-color: #10b981;
-        color: white;
-        padding: 0.7rem;
-        border: none;
-        border-radius: 10px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #059669;
-    }
-
-    .back-link {
-        margin-top: 1rem;
-        text-align: center;
-    }
-
-    .back-link a {
-        color: #2563eb;
-        text-decoration: none;
-    }
-
-    .back-link a:hover {
-        text-decoration: underline;
-    }
+  }
 </style>
 
 <div class="form-container">
-    <h2>{% if form.instance.pk %}Edit{% else %}New{% endif %} Journal Entry</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-    <div class="back-link">
-        <a href="{% url 'journal_list' %}">← Back to Entries</a>
-    </div>
+  <h2>{% if form.instance.pk %}✏️ Edit{% else %}📝 New{% endif %} Journal Entry</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">💾 Save Entry</button>
+  </form>
+
+  <div class="back-link">
+    <a href="{% url 'journal_list' %}">← Back to Entries</a>
+  </div>
 </div>
 
 {% endblock %}

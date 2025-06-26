@@ -2,64 +2,76 @@
 {% block content %}
 
 <style>
-    .delete-container {
-        max-width: 600px;
-        margin: auto;
-        padding: 2rem;
-        background: #fff7f7;
-        border: 1px solid #fca5a5;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(255,0,0,0.05);
-        text-align: center;
-    }
+  .delete-container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 2.5rem;
+    background: #fff7f7;
+    border: 2px solid #fecaca;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.08);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-    .delete-container h2 {
-        color: #b91c1c;
-        margin-bottom: 1rem;
-    }
+  .delete-container h2 {
+    color: #b91c1c;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
 
-    .delete-container p {
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
+  .delete-container p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2.2rem;
+  }
 
-    .delete-container form {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-    }
+  .delete-container form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 
-    .delete-container button {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-    }
+  .delete-container button,
+  .delete-container a {
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
 
-    .confirm-btn {
-        background: #ef4444;
-        color: white;
-    }
+  .confirm-btn {
+    background-color: #ef4444;
+    color: white;
+  }
 
-    .cancel-btn {
-        background: #e5e7eb;
-        color: #333;
-    }
+  .confirm-btn:hover {
+    background-color: #dc2626;
+  }
 
-    .cancel-btn:hover {
-        background: #d1d5db;
-    }
+  .cancel-btn {
+    background-color: #e5e7eb;
+    color: #374151;
+  }
+
+  .cancel-btn:hover {
+    background-color: #d1d5db;
+  }
 </style>
 
 <div class="delete-container">
-    <h2>Delete Entry</h2>
-    <p>Are you sure you want to delete "<strong>{{ journal.title }}</strong>"?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="confirm-btn">Yes, delete</button>
-        <a href="{% url 'journal_list' %}"><button type="button" class="cancel-btn">Cancel</button></a>
-    </form>
+  <h2>🗑️ Delete Entry</h2>
+  <p>Are you sure you want to delete "<strong>{{ journal.title }}</strong>"?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="confirm-btn">✅ Yes, delete it</button>
+    <a href="{% url 'journal_list' %}" class="cancel-btn">❌ Cancel</a>
+  </form>
 </div>
 
 {% endblock %}

@@ -11,12 +11,17 @@
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     font-family: 'Segoe UI', sans-serif;
   }
+
   .edit-container h2 {
     text-align: center;
     color: #4CAF50;
     margin-bottom: 25px;
+    font-size: 2rem;
   }
-  form input, form textarea {
+
+  form input,
+  form textarea,
+  form select {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
@@ -24,7 +29,9 @@
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 15px;
+    box-sizing: border-box;
   }
+
   form button {
     background: #4CAF50;
     color: white;
@@ -35,8 +42,32 @@
     font-size: 16px;
     width: 100%;
   }
+
   form button:hover {
     background: #45a049;
+  }
+
+  @media (max-width: 600px) {
+    .edit-container {
+      padding: 20px;
+      margin: 20px 10px;
+    }
+
+    .edit-container h2 {
+      font-size: 1.6rem;
+    }
+
+    form input,
+    form textarea,
+    form select {
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    form button {
+      font-size: 15px;
+      padding: 10px;
+    }
   }
 </style>
 

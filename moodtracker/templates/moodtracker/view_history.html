@@ -3,60 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Your Mood History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            background: #eef2f3;
-            font-family: Arial, sans-serif;
-            padding: 40px;
+            background: linear-gradient(to right, #f3f4f7, #e8ecf1);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 30px 20px;
             color: #444;
         }
+
         .container {
             max-width: 800px;
             margin: auto;
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
         }
+
         h2 {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            color: #4CAF50;
         }
+
         .entry {
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid #ddd;
             padding: 15px 0;
         }
+
         .entry:last-child {
             border-bottom: none;
         }
+
         .mood {
+            display: inline-block;
+            background-color: #e0f7e9;
+            color: #2d7a46;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 15px;
             font-weight: bold;
-            font-size: 18px;
         }
+
         .note {
-            margin: 5px 0;
+            margin: 10px 0 5px;
+            font-style: italic;
             color: #666;
         }
+
         .date {
             font-size: 14px;
-            color: #aaa;
+            color: #999;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 30px 0;
+            color: #888;
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .mood {
+                font-size: 14px;
+            }
+
+            .note {
+                font-size: 15px;
+            }
+
+            .date {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Your Mood History</h2>
-        {% for mood in moods %}
-        <div class="entry">
-            <div class="mood">Mood: {{ mood.get_mood_display }}</div>
-            {% if mood.note %}
-                <div class="note">{{ mood.note }}</div>
-            {% endif %}
-            <div class="date">{{ mood.date|date:"F d, Y - h:i A" }}</div>
-        </div>
-        {% empty %}
-        <p style="text-align:center;">No mood entries yet. Try submitting one!</p>
-        {% endfor %}
+        <h2>📝 Your Mood History</h2>
+
+        {% if moods %}
+            {% for mood in moods %}
+            <div class="entry">
+                <div class="mood">{{ mood.get_mood_display }}</div>
+                {% if mood.note %}
+                    <div class="note">"{{ mood.note }}"</div>
+                {% endif %}
+                <div class="date">{{ mood.date|date:"F d, Y - h:i A" }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-msg">
+                No mood entries yet. 🌈 Start tracking how you feel!
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

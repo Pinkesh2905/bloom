@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Bloom | Mental Wellness</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
@@ -65,15 +68,35 @@
             header {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
             }
 
             nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
                 margin-top: 10px;
             }
 
             nav a {
                 display: inline-block;
-                margin: 5px 10px 0 0;
+                margin: 5px 0;
+                padding: 8px 12px;
+                font-size: 0.95rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            footer {
+                font-size: 0.8rem;
+                padding: 0.8rem;
             }
         }
     </style>
@@ -121,6 +144,5 @@
             }
         });
     </script>
-    
 </body>
 </html>

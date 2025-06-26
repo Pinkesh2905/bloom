@@ -11,11 +11,22 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     font-family: 'Segoe UI', sans-serif;
   }
+
   .signup-container h2 {
     text-align: center;
     color: #4CAF50;
     margin-bottom: 25px;
+    font-size: 2rem;
   }
+
+  .signup-container .errorlist {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    list-style: none;
+    padding-left: 0;
+  }
+
   form input {
     width: 100%;
     padding: 12px;
@@ -23,7 +34,16 @@
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 15px;
+    box-sizing: border-box;
   }
+
+  .password-hint {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: -15px;
+    margin-bottom: 15px;
+  }
+
   button {
     width: 100%;
     background-color: #4CAF50;
@@ -34,17 +54,69 @@
     cursor: pointer;
     font-size: 16px;
   }
+
   button:hover {
     background-color: #45a049;
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.95rem;
+  }
+
+  .login-link a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .signup-container {
+      margin: 20px 10px;
+      padding: 20px;
+    }
+
+    .signup-container h2 {
+      font-size: 1.6rem;
+    }
+
+    form input {
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    button {
+      font-size: 15px;
+      padding: 10px;
+    }
   }
 </style>
 
 <div class="signup-container">
   <h2>Sign Up</h2>
+
   <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      {{ field.errors }}
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.name == "password1" %}
+        <p class="password-hint">⚠️ Your password should be at least 8 characters long and not entirely numeric.</p>
+      {% endif %}
+    {% endfor %}
+    
     <button type="submit">Register</button>
   </form>
+
+  <div class="login-link">
+    Already have an account? <a href="{% url 'login' %}">Login here</a>
+  </div>
 </div>
 {% endblock %}

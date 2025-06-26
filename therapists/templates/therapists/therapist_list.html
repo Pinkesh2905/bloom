@@ -1,94 +1,189 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f7fa;
-      padding: 30px;
-    }
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    padding: 30px 20px;
+  }
 
+  h2 {
+    text-align: center;
+    color: #2d3e50;
+    margin-bottom: 30px;
+    font-size: 30px;
+  }
+
+  .search-bar {
+    max-width: 400px;
+    margin: 0 auto 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+
+  .therapist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .therapist-card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    padding: 25px 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .therapist-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .therapist-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 4px solid #e0e0e0;
+  }
+
+  .therapist-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .therapist-specialization {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 8px;
+  }
+
+  .therapist-rating {
+    font-size: 15px;
+    color: #fbbf24;
+    margin-bottom: 8px;
+  }
+
+  .therapist-slots {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+
+  .view-profile-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    display: inline-block;
+  }
+
+  .view-profile-btn:hover {
+    background-color: #45a049;
+  }
+
+  .appointment-link {
+    display: block;
+    margin: 30px auto 0;
+    text-align: center;
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    max-width: 300px;
+    font-size: 15px;
+  }
+
+  .appointment-link:hover {
+    background-color: #45a049;
+  }
+
+  @media (max-width: 600px) {
     h2 {
-      text-align: center;
-      color: #2d3e50;
-      margin-bottom: 40px;
-      font-size: 32px;
+      font-size: 24px;
     }
 
-    .therapist-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 30px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .therapist-card {
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-      padding: 25px 20px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .therapist-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    .therapist-image {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 15px;
-      border: 4px solid #e0e0e0;
+    .search-bar input {
+      font-size: 14px;
     }
 
     .therapist-name {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 6px;
+      font-size: 17px;
     }
 
-    .therapist-specialization {
-      font-size: 15px;
-      color: #777;
-      margin-bottom: 12px;
+    .therapist-specialization,
+    .therapist-rating,
+    .therapist-slots {
+      font-size: 13px;
     }
 
     .view-profile-btn {
-      background-color: #4CAF50;
-      color: #fff;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 6px;
+      font-size: 13px;
+      padding: 8px 14px;
+    }
+
+    .appointment-link {
       font-size: 14px;
-      transition: background-color 0.3s;
-      display: inline-block;
+      padding: 10px 20px;
     }
+  }
+</style>
 
-    .view-profile-btn:hover {
-      background-color: #45a049;
+<h2>Our Therapists</h2>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search therapist by name or specialization..." onkeyup="filterTherapists()">
+</div>
+
+<div class="therapist-grid" id="therapistGrid">
+  {% for therapist in therapists %}
+    <div class="therapist-card">
+      <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" class="therapist-image">
+      <div class="therapist-name">{{ therapist.name }}</div>
+      <div class="therapist-specialization">{{ therapist.specialization }}</div>
+      <div class="therapist-rating">⭐ 4.8 (120 reviews)</div>
+      <div class="therapist-slots">Available: Mon, Wed, Fri (4PM – 7PM)</div>
+      <a href="{% url 'therapist_detail' therapist.id %}" class="view-profile-btn">View Profile</a>
+    </div>
+  {% empty %}
+    <p style="text-align:center;">No therapists available at the moment.</p>
+  {% endfor %}
+</div>
+
+<a href="{% url 'user_appointments' %}" class="appointment-link">📅 View My Appointments</a>
+
+<script>
+  function filterTherapists() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const cards = document.getElementsByClassName("therapist-card");
+
+    for (let card of cards) {
+      const name = card.querySelector(".therapist-name").textContent.toLowerCase();
+      const specialization = card.querySelector(".therapist-specialization").textContent.toLowerCase();
+
+      card.style.display = (name.includes(input) || specialization.includes(input)) ? "block" : "none";
     }
-  </style>
-
-  <h2>Our Therapists</h2>
-
-  <div class="therapist-grid">
-    {% for therapist in therapists %}
-      <div class="therapist-card">
-        <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" class="therapist-image">
-        <div class="therapist-name">{{ therapist.name }}</div>
-        <div class="therapist-specialization">{{ therapist.specialization }}</div>
-        <a href="{% url 'therapist_detail' therapist.id %}" class="view-profile-btn">View Profile</a>
-      </div>
-    {% empty %}
-      <p>No therapists available at the moment.</p>
-    {% endfor %}
-  </div>
-  <a href="{% url 'user_appointments' %}" style="display: inline-block; margin: 20px 0; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">📅 View My Appointments</a>
+  }
+</script>
 
 {% endblock %}

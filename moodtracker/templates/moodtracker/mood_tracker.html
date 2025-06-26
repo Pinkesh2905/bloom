@@ -3,20 +3,20 @@
 <style>
   .mood-wrapper {
     max-width: 700px;
-    margin: auto;
-    margin-top: 50px;
+    margin: 50px auto;
     padding: 25px;
-    background: #fff0f5; /* default */
+    background: #fff0f5;
     border-radius: 15px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     font-family: "Segoe UI", sans-serif;
-    transition: background 0.5s ease-in-out;
+    transition: background 0.4s ease-in-out;
   }
 
   .mood-wrapper h2,
   .mood-wrapper h3 {
     text-align: center;
     color: #e75480;
+    margin-bottom: 20px;
   }
 
   .mood-form label {
@@ -30,6 +30,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    justify-content: center;
     margin-top: 10px;
   }
 
@@ -39,26 +40,37 @@
 
   .radio-options label {
     background: #ffe4ec;
-    padding: 10px 15px;
-    border-radius: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
     cursor: pointer;
     border: 2px solid transparent;
+    font-size: 15px;
     transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .radio-options input[type="radio"]:checked + label {
     border-color: #e75480;
     background: #fdd6e3;
     font-weight: bold;
+    transform: scale(1.05);
   }
 
   textarea {
     width: 100%;
     border-radius: 8px;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ccc;
     font-size: 15px;
     margin-top: 8px;
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  textarea::placeholder {
+    color: #aaa;
   }
 
   .submit-btn {
@@ -68,11 +80,12 @@
     padding: 12px 25px;
     font-size: 16px;
     border-radius: 10px;
-    margin-top: 20px;
+    margin-top: 25px;
     cursor: pointer;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    transition: background 0.3s ease;
   }
 
   .submit-btn:hover {
@@ -82,13 +95,34 @@
   .mood-history {
     margin-top: 40px;
     background: #fdf4f8;
-    padding: 15px;
-    border-radius: 10px;
+    padding: 20px;
+    border-radius: 12px;
   }
 
   .mood-entry {
     padding: 10px 0;
     border-bottom: 1px solid #ddd;
+    color: #444;
+  }
+
+  .mood-entry:last-child {
+    border-bottom: none;
+  }
+
+  .mood-entry strong {
+    color: #333;
+  }
+
+  @media (max-width: 600px) {
+    .radio-options {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .radio-options label {
+      width: 100%;
+      justify-content: center;
+    }
   }
 </style>
 
@@ -108,12 +142,17 @@
         onchange="changeMood('{{ val }}')"
         required
       />
-      <label for="mood_{{ forloop.counter }}">{{ label }}</label>
+      <label for="mood_{{ forloop.counter }}">
+        {{ mood_icons[val|lower] }} {{ label }}
+      </label>
       {% endfor %}
     </div>
-    <br />
-    <label for="id_note">📝 Add a note (optional):</label><br />
-    {{ form.note }}
+
+    <label for="id_note">📝 Add a note (optional):</label>
+    {{ form.note|add_class:"form-control" }}
+    <script>
+      document.getElementById("id_note").placeholder = "e.g., Felt really great after a walk, or tired from work...";
+    </script>
 
     <button type="submit" class="submit-btn">🌟 Submit Mood</button>
   </form>
@@ -123,7 +162,7 @@
     {% if mood_history %}
       {% for entry in mood_history %}
       <div class="mood-entry">
-        <strong>{{ entry.timestamp|date:"d M Y, H:i" }}</strong> — {{ entry.get_mood_display }}
+        <strong>{{ entry.timestamp|date:"d M Y, H:i" }}</strong> — {{ mood_icons[entry.mood|lower] }} {{ entry.get_mood_display }}
         {% if entry.note %}
           <br />🗒️ <em>{{ entry.note }}</em>
         {% endif %}
@@ -139,14 +178,14 @@
   function changeMood(mood) {
     const card = document.getElementById('moodCard');
     const colors = {
-      'happy': '#fffacd',        // light yellow 😊
-      'sad': '#dbe9f4',          // light blue 😢
-      'anxious': '#fdebd0',      // peach 😟
-      'angry': '#f8d7da',        // light red 😠
-      'relaxed': '#d4edda',      // light green 😌
-      'excited': '#e0bbff',      // lavender 😄
-      'tired': '#f0f0f0',        // soft grey 😴
-      'neutral': '#f5f5dc'       // beige 😐
+      'happy': '#fffacd',
+      'sad': '#dbe9f4',
+      'anxious': '#fdebd0',
+      'angry': '#f8d7da',
+      'relaxed': '#d4edda',
+      'excited': '#e0bbff',
+      'tired': '#f0f0f0',
+      'neutral': '#f5f5dc'
     };
     card.style.backgroundColor = colors[mood.toLowerCase()] || '#fff0f5';
   }

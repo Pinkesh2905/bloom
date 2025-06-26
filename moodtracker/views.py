@@ -17,7 +17,19 @@ def mood_tracker(request):
     
     mood_history = MoodEntry.objects.filter(user=request.user).order_by('-timestamp')[:10]
 
+    mood_icons = {
+        "happy": "😊",
+        "sad": "😢",
+        "anxious": "😟",
+        "angry": "😠",
+        "relaxed": "😌",
+        "excited": "😄",
+        "tired": "😴",
+        "neutral": "😐",
+    }
+    
     return render(request, 'moodtracker/mood_tracker.html', {
         'form': form,
-        'mood_history': mood_history
+        'mood_history': mood_history,
+        "mood_icons": mood_icons,
     })
