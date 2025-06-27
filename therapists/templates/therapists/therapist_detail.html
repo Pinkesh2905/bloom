@@ -161,13 +161,6 @@
         </p>
         <p class="therapist-experience"><strong>Experience:</strong> {{ therapist.experience }} years</p>
         <p class="therapist-bio"><strong>Bio:</strong> {{ therapist.bio }}</p>
-        <p class="therapist-availability"><strong>Availability:</strong>
-          {% if therapist.is_available %}
-            <span style="color: green;">Available</span>
-          {% else %}
-            <span style="color: red;">Not Available</span>
-          {% endif %}
-        </p>
       </div>
     </div>
 
