@@ -1,214 +1,336 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f9f9f9;
-      padding: 30px 20px;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .therapist-card {
-      background-color: white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-      border-radius: 10px;
-      padding: 25px;
-      margin-bottom: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .therapist-image {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 30px;
-      margin-bottom: 20px;
-      border: 4px solid #e0e0e0;
-    }
-
-    .therapist-info {
-      flex: 1;
-      min-width: 250px;
-    }
-
-    .therapist-name {
-      font-size: 24px;
-      font-weight: bold;
-      color: #4CAF50;
-    }
-
-    .therapist-specialization {
-      font-size: 16px;
-      color: #555;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-    }
-
-    .therapist-specialization i {
-      margin-right: 8px;
-    }
-
-    .therapist-experience,
-    .therapist-bio,
-    .therapist-availability {
-      font-size: 16px;
-      color: #555;
-      margin-top: 10px;
-    }
-
-    .therapist-availability {
-      color: #d6336c;
-    }
-
-    h3 {
-      margin-top: 40px;
-      color: #333;
-      font-size: 22px;
-    }
-
-    .appointment-form {
-      margin-top: 20px;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-    }
-
-    .appointment-form input,
-    .appointment-form textarea,
-    .appointment-form select {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-      box-sizing: border-box;
-    }
-
-    .appointment-form button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    .appointment-form button:hover {
-      background-color: #45a049;
-    }
-
-    .review-section {
-      margin-top: 40px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-    }
-
-    .review {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-
-    .review:last-child {
-      border-bottom: none;
-    }
-
-    .stars {
-      color: #FFD700;
-    }
-
-    @media (max-width: 768px) {
-      .therapist-card {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .therapist-image {
-        margin-right: 0;
-      }
-
-      h3 {
-        text-align: center;
-        font-size: 20px;
-      }
-    }
-  </style>
-
-  <div class="container">
-    <div class="therapist-card">
-      <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" class="therapist-image">
-      <div class="therapist-info">
-        <h2 class="therapist-name">{{ therapist.name }}</h2>
-        <p class="therapist-specialization">
-          <i class="fas fa-user-md"></i>
-          <strong>Specialization:</strong> {{ therapist.specialization }}
-        </p>
-        <p class="therapist-experience"><strong>Experience:</strong> {{ therapist.experience }} years</p>
-        <p class="therapist-bio"><strong>Bio:</strong> {{ therapist.bio }}</p>
-        <p class="therapist-availability"><strong>Availability:</strong>
-          {% if therapist.is_available %}
-            <span style="color: green;">Available</span>
-          {% else %}
-            <span style="color: red;">Not Available</span>
-          {% endif %}
-        </p>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  
+  <!-- Therapist Header -->
+  <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-8 md:p-12 mb-8">
+    <div class="flex flex-col lg:flex-row items-start space-y-8 lg:space-y-0 lg:space-x-12">
+      <!-- Profile Image -->
+      <div class="relative">
+        <img class="h-48 w-48 rounded-3xl object-cover shadow-2xl flex-shrink-0" 
+             src="{{ therapist.profile_picture.url }}" 
+             alt="Dr. {{ therapist.full_name }}">
+        <div class="absolute -bottom-3 -right-3 w-12 h-12 bg-green-400 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+          <i class="fas fa-check text-white text-lg"></i>
+        </div>
       </div>
-    </div>
+      
+      <!-- Therapist Info -->
+      <div class="flex-1">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
+          <div>
+            <h1 class="text-4xl font-bold font-fredoka text-gray-800 mb-2">
+              Dr. {{ therapist.full_name }}
+            </h1>
+            <p class="text-xl text-purple-600 font-semibold font-dm mb-4">
+              {{ therapist.specializations_display|join:", " }}
+            </p>
+            
+            <!-- Rating -->
+            <div class="flex items-center mb-4">
+              <div class="text-yellow-500 text-xl mr-3">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= therapist.rating %}
+                    <i class="fas fa-star"></i>
+                  {% else %}
+                    <i class="far fa-star"></i>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <span class="text-lg font-semibold text-gray-700">{{ therapist.rating|floatformat:1 }}</span>
+              <span class="text-gray-500 ml-2">({{ therapist.total_reviews }} review{{ therapist.total_reviews|pluralize }})</span>
+            </div>
+          </div>
+          
+          <!-- Price Badge -->
+          <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-2xl text-center shadow-lg">
+            <div class="text-2xl font-bold">${{ therapist.hourly_rate }}</div>
+            <div class="text-sm opacity-90">per session</div>
+          </div>
+        </div>
 
-    <h3>Book an Appointment</h3>
-    <form class="appointment-form" method="post">
-      {% csrf_token %}
-      {% for field in form %}
-        <div>
-          {{ field.label_tag }}<br>
-          {{ field }}
-          {% if field.errors %}
-            <div style="color: red;">{{ field.errors }}</div>
+        <!-- Key Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="text-center p-4 bg-purple-50 rounded-2xl">
+            <div class="text-2xl font-bold text-purple-600">{{ therapist.years_experience }}</div>
+            <div class="text-sm text-gray-600">Years Experience</div>
+          </div>
+          <div class="text-center p-4 bg-blue-50 rounded-2xl">
+            <div class="text-2xl font-bold text-blue-600">{{ therapist.total_sessions }}</div>
+            <div class="text-sm text-gray-600">Sessions Completed</div>
+          </div>
+          <div class="text-center p-4 bg-green-50 rounded-2xl">
+            <div class="text-2xl font-bold text-green-600">{{ therapist.response_time_hours }}h</div>
+            <div class="text-sm text-gray-600">Response Time</div>
+          </div>
+          <div class="text-center p-4 bg-orange-50 rounded-2xl">
+            <div class="text-2xl font-bold text-orange-600">{{ therapist.session_duration }}</div>
+            <div class="text-sm text-gray-600">Minutes/Session</div>
+          </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="flex flex-wrap gap-4 mb-6">
+          {% if therapist.languages_display %}
+            <div class="flex items-center text-gray-600">
+              <i class="fas fa-globe mr-2 text-purple-500"></i>
+              <span>{{ therapist.languages_display|join:", " }}</span>
+            </div>
+          {% endif %}
+          
+          {% if therapist.accepts_insurance %}
+            <div class="flex items-center text-gray-600">
+              <i class="fas fa-shield-alt mr-2 text-green-500"></i>
+              <span>Accepts Insurance</span>
+            </div>
+          {% endif %}
+          
+          {% if therapist.license_number %}
+            <div class="flex items-center text-gray-600">
+              <i class="fas fa-certificate mr-2 text-blue-500"></i>
+              <span>Licensed Professional</span>
+            </div>
           {% endif %}
         </div>
-      {% endfor %}
-      <label for="slot">Choose a Slot:</label>
-      <select name="slot" id="slot">
-        <option>10:00 AM - 10:30 AM</option>
-        <option>11:00 AM - 11:30 AM</option>
-        <option>2:00 PM - 2:30 PM</option>
-        <option>4:00 PM - 4:30 PM</option>
-      </select>
-      <button type="submit">Book Appointment</button>
-    </form>
 
-    <div class="review-section">
-      <h3>🌟 Patient Reviews</h3>
-      <div class="review">
-        <strong>Aarav M.</strong> <span class="stars">★★★★★</span>
-        <p>Dr. {{ therapist.name }} helped me feel heard and supported. Highly recommend!</p>
-      </div>
-      <div class="review">
-        <strong>Saanvi K.</strong> <span class="stars">★★★★☆</span>
-        <p>Very professional and empathetic. Great experience overall.</p>
-      </div>
-      <div class="review">
-        <strong>Yash R.</strong> <span class="stars">★★★★★</span>
-        <p>She helped me through my anxiety issues. Truly thankful!</p>
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+          <a href="{% url 'therapists:book_appointment' therapist.id %}" 
+             class="flex-1 text-center px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-2xl hover:from-purple-600 hover:to-pink-600 shadow-xl font-dm text-lg transition-all hover:scale-105">
+            <i class="fas fa-calendar-plus mr-3"></i>Book Appointment
+          </a>
+          
+          {% if next_available_date %}
+            <div class="flex-1 text-center px-6 py-4 border-2 border-purple-500 text-purple-600 font-semibold rounded-2xl bg-white">
+              <div class="text-sm">Next Available</div>
+              <div class="font-bold">{{ next_available_date|date:"M d" }} at {{ next_available_time|time:"g:i A" }}</div>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <!-- About Section -->
+      <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-8">
+        <h2 class="text-2xl font-bold font-fredoka text-gray-800 mb-6">About Dr. {{ therapist.user.get_full_name }}</h2>
+        <div class="prose prose-lg max-w-none font-dm text-gray-700">
+          <p>{{ therapist.bio|linebreaks }}</p>
+        </div>
+      </div>
+
+      <!-- Session Types -->
+      <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-8">
+        <h2 class="text-2xl font-bold font-fredoka text-gray-800 mb-6">Available Session Types</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {% if therapist.offers_video_sessions %}
+            <div class="flex items-center p-4 bg-blue-50 rounded-2xl">
+              <i class="fas fa-video text-blue-500 text-2xl mr-4"></i>
+              <div>
+                <h3 class="font-semibold text-gray-800">Video Sessions</h3>
+                <p class="text-sm text-gray-600">Face-to-face via secure video call</p>
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if therapist.offers_chat_sessions %}
+            <div class="flex items-center p-4 bg-green-50 rounded-2xl">
+              <i class="fas fa-comments text-green-500 text-2xl mr-4"></i>
+              <div>
+                <h3 class="font-semibold text-gray-800">Chat Sessions</h3>
+                <p class="text-sm text-gray-600">Text-based therapy sessions</p>
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if therapist.offers_phone_sessions %}
+            <div class="flex items-center p-4 bg-purple-50 rounded-2xl">
+              <i class="fas fa-phone text-purple-500 text-2xl mr-4"></i>
+              <div>
+                <h3 class="font-semibold text-gray-800">Phone Sessions</h3>
+                <p class="text-sm text-gray-600">Audio-only consultations</p>
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if therapist.offers_in_person %}
+            <div class="flex items-center p-4 bg-orange-50 rounded-2xl">
+              <i class="fas fa-handshake text-orange-500 text-2xl mr-4"></i>
+              <div>
+                <h3 class="font-semibold text-gray-800">In-Person Sessions</h3>
+                <p class="text-sm text-gray-600">Meet at the office location</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      {% if reviews %}
+        <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-8">
+          <h2 class="text-2xl font-bold font-fredoka text-gray-800 mb-6">Patient Reviews</h2>
+          
+          <!-- Review Statistics -->
+          {% if review_stats.total_reviews > 0 %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 p-6 bg-gray-50 rounded-2xl">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600">{{ review_stats.avg_communication|floatformat:1 }}/5</div>
+                <div class="text-sm text-gray-600">Communication</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">{{ review_stats.avg_professionalism|floatformat:1 }}/5</div>
+                <div class="text-sm text-gray-600">Professionalism</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600">{{ review_stats.avg_effectiveness|floatformat:1 }}/5</div>
+                <div class="text-sm text-gray-600">Effectiveness</div>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Individual Reviews -->
+          <div class="space-y-6">
+            {% for review in reviews %}
+              <div class="border border-gray-200 rounded-2xl p-6">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                      {% if review.is_anonymous %}
+                        <i class="fas fa-user-secret"></i>
+                      {% else %}
+                        {{ review.patient.first_name|first }}
+                      {% endif %}
+                    </div>
+                    <div>
+                      <div class="font-semibold text-gray-800">
+                        {% if review.is_anonymous %}
+                          Anonymous Patient
+                        {% else %}
+                          {{ review.patient.first_name }}
+                        {% endif %}
+                      </div>
+                      <div class="text-sm text-gray-500">{{ review.created_at|date:"M d, Y" }}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="text-yellow-500">
+                    {% for i in "12345" %}
+                      {% if forloop.counter <= review.rating %}
+                        <i class="fas fa-star"></i>
+                      {% else %}
+                        <i class="far fa-star"></i>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+                
+                {% if review.review_text %}
+                  <p class="text-gray-700 mb-4">{{ review.review_text }}</p>
+                {% endif %}
+                
+                {% if review.would_recommend %}
+                  <div class="flex items-center text-green-600 text-sm">
+                    <i class="fas fa-thumbs-up mr-2"></i>
+                    <span>Would recommend this therapist</span>
+                  </div>
+                {% endif %}
+                
+                {% if review.therapist_response %}
+                  <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="flex items-start">
+                      <img class="w-8 h-8 rounded-full mr-3" src="{{ therapist.profile_picture.url }}" alt="Therapist">
+                      <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm">Dr. {{ therapist.full_name }}</div>
+                        <p class="text-sm text-gray-600 mt-1">{{ review.therapist_response }}</p>
+                        <div class="text-xs text-gray-400 mt-1">{{ review.responded_at|date:"M d, Y" }}</div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      
+      <!-- Specializations -->
+      <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-6">
+        <h3 class="text-xl font-bold font-fredoka text-gray-800 mb-4">Specializations</h3>
+        <div class="space-y-2">
+          {% for spec in therapist.specializations_display %}
+            <div class="flex items-center p-3 bg-purple-50 rounded-xl">
+              <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+              <span class="text-gray-700">{{ spec }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Qualifications -->
+      {% if therapist.qualifications %}
+        <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-6">
+          <h3 class="text-xl font-bold font-fredoka text-gray-800 mb-4">Qualifications</h3>
+          <div class="space-y-2">
+            {% for qual in therapist.qualifications %}
+              <div class="flex items-center p-3 bg-blue-50 rounded-xl">
+                <i class="fas fa-graduation-cap text-blue-500 mr-3"></i>
+                <span class="text-gray-700 text-sm">{{ qual }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Insurance -->
+      {% if therapist.accepts_insurance and therapist.insurance_providers %}
+        <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-6">
+          <h3 class="text-xl font-bold font-fredoka text-gray-800 mb-4">Accepted Insurance</h3>
+          <div class="space-y-2">
+            {% for provider in therapist.insurance_providers %}
+              <div class="flex items-center p-3 bg-green-50 rounded-xl">
+                <i class="fas fa-shield-alt text-green-500 mr-3"></i>
+                <span class="text-gray-700 text-sm">{{ provider }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Office Location -->
+      {% if therapist.office_address and therapist.offers_in_person %}
+        <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-6">
+          <h3 class="text-xl font-bold font-fredoka text-gray-800 mb-4">Office Location</h3>
+          <div class="flex items-start">
+            <i class="fas fa-map-marker-alt text-red-500 mr-3 mt-1"></i>
+            <span class="text-gray-700 text-sm">{{ therapist.office_address|linebreaks }}</span>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Leave Review CTA -->
+      {% if can_review %}
+        <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-3xl shadow-xl p-6 text-center">
+          <i class="fas fa-star text-3xl mb-3"></i>
+          <h3 class="text-xl font-bold font-fredoka mb-2">Share Your Experience</h3>
+          <p class="text-sm opacity-90 mb-4">Help others by leaving a review</p>
+          <a href="{% url 'therapists:leave_review' %}?therapist={{ therapist.id }}" 
+             class="inline-block px-6 py-2 bg-white text-orange-600 font-semibold rounded-xl hover:bg-gray-100 transition-all">
+            Leave Review
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}

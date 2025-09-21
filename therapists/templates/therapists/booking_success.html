@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto text-center">
+  <div class="glass-strong rounded-3xl shadow-2xl p-12 animate-bounce-in">
+    <div class="w-24 h-24 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+      <i class="fas fa-check-double text-white text-4xl"></i>
+    </div>
+    <h1 class="text-4xl font-bold font-fredoka text-gray-800">Appointment Confirmed!</h1>
+    <p class="mt-4 text-lg text-gray-600 font-dm">
+      Your session has been successfully scheduled. You will receive a confirmation email shortly.
+    </p>
+    <div class="mt-8">
+      <a href="{% url 'therapists:therapist_list' %}" 
+         class="btn-modern inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-2xl hover:from-blue-600 hover:to-purple-600 shadow-lg font-dm">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Therapists
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

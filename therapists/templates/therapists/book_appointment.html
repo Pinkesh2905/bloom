@@ -1,106 +1,764 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block head %}
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f7fc;
-      padding: 30px 20px;
+{% block extra_css %}
+<style>
+  .booking-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .therapist-info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .session-type-option {
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .session-type-option:hover {
+    border-color: #8b5cf6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  }
+  
+  .session-type-option.selected {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    color: white;
+  }
+  
+  .time-slot {
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 12px;
+  }
+  
+  .time-slot:hover {
+    border-color: #10b981;
+    background-color: #ecfdf5;
+  }
+  
+  .time-slot.selected {
+    border-color: #10b981;
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .time-slot.unavailable {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+    cursor: not-allowed;
+  }
+  
+  .calendar-day {
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  
+  .calendar-day:hover:not(.unavailable) {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+  }
+  
+  .calendar-day.selected {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .calendar-day.unavailable {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+  }
+  
+  .calendar-day.today {
+    background-color: #fef3c7;
+    border-color: #f59e0b;
+  }
+  
+  .urgency-option {
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .urgency-option:hover {
+    border-color: #f59e0b;
+  }
+  
+  .urgency-option.selected {
+    border-color: #f59e0b;
+    background-color: #fef3c7;
+  }
+  
+  .progress-step {
+    position: relative;
+  }
+  
+  .progress-step.active .step-circle {
+    background-color: #8b5cf6;
+    color: white;
+  }
+  
+  .progress-step.completed .step-circle {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .step-circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 0.5rem;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
     }
-
-    h2 {
-      text-align: center;
-      color: #2d3e50;
-      margin-bottom: 30px;
-      font-size: 2rem;
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
-
-    form {
-      background-color: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    form button {
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    form button:hover {
-      background-color: #45a049;
-    }
-
-    form label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    form input[type="date"],
-    form input[type="time"],
-    form textarea,
-    form select,
-    form input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-      box-sizing: border-box;
-    }
-
-    form textarea {
-      height: 120px;
-      resize: vertical;
-    }
-
-    form p {
-      margin-top: 12px;
-      font-size: 14px;
-      text-align: center;
-      color: #555;
-    }
-
-    @media (max-width: 600px) {
-      h2 {
-        font-size: 1.6rem;
-      }
-
-      form {
-        padding: 20px;
-      }
-
-      form input, form textarea, form button {
-        font-size: 15px;
-        padding: 10px;
-      }
-    }
-  </style>
+  }
+  
+  .step-content {
+    animation: slideIn 0.5s ease-out;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-  <h2>Book an Appointment</h2>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold font-fredoka mb-2">
+      <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        Book Your Session
+      </span>
+    </h1>
+    <p class="text-gray-600 font-dm text-lg">Schedule your appointment with Dr. {{ therapist.full_name }}</p>
+  </div>
 
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Book Appointment</button>
-    {# Optional success message can be shown after submission #}
-    {% if message %}
-      <p style="color: green;">{{ message }}</p>
-    {% endif %}
-  </form>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Sidebar - Therapist Info -->
+    <div class="lg:col-span-1">
+      <div class="therapist-info-card rounded-3xl p-6 shadow-xl mb-6">
+        <div class="text-center mb-4">
+          <img class="h-24 w-24 rounded-2xl object-cover mx-auto mb-4 shadow-lg" 
+               src="{{ therapist.profile_picture.url }}" 
+               alt="Dr. {{ therapist.full_name }}">
+          <h2 class="text-2xl font-bold font-fredoka">Dr. {{ therapist.full_name }}</h2>
+          <div class="flex justify-center items-center mt-2">
+            <div class="text-yellow-300 mr-2">
+              {% for i in "12345" %}
+                {% if forloop.counter <= therapist.rating %}
+                  <i class="fas fa-star"></i>
+                {% else %}
+                  <i class="far fa-star"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <span class="text-sm opacity-90">{{ therapist.rating|floatformat:1 }} ({{ therapist.total_reviews }} reviews)</span>
+          </div>
+        </div>
+        
+        <div class="space-y-3 text-sm">
+          <div class="flex items-center">
+            <i class="fas fa-user-md mr-3 opacity-75"></i>
+            <span>{{ therapist.years_experience }} years experience</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-dollar-sign mr-3 opacity-75"></i>
+            <span>${{ therapist.hourly_rate }}/session ({{ therapist.session_duration }} min)</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-clock mr-3 opacity-75"></i>
+            <span>Responds in {{ therapist.response_time_hours }}h typically</span>
+          </div>
+          {% if therapist.accepts_insurance %}
+            <div class="flex items-center">
+              <i class="fas fa-shield-alt mr-3 opacity-75"></i>
+              <span>Accepts insurance</span>
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- Specializations -->
+        <div class="mt-4 pt-4 border-t border-white/20">
+          <h3 class="font-semibold mb-2 font-fredoka">Specializations</h3>
+          <div class="flex flex-wrap gap-1">
+            {% for spec in therapist.specializations_display|slice:":4" %}
+              <span class="bg-white/20 text-xs px-2 py-1 rounded-full">{{ spec }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Types Available -->
+      <div class="booking-card rounded-3xl p-6 shadow-xl">
+        <h3 class="text-xl font-bold font-fredoka mb-4 text-gray-800">Available Session Types</h3>
+        <div class="space-y-2 text-sm">
+          {% if therapist.offers_video_sessions %}
+            <div class="flex items-center text-green-600">
+              <i class="fas fa-video mr-3"></i>
+              <span>Video Sessions Available</span>
+            </div>
+          {% endif %}
+          {% if therapist.offers_chat_sessions %}
+            <div class="flex items-center text-blue-600">
+              <i class="fas fa-comments mr-3"></i>
+              <span>Chat Sessions Available</span>
+            </div>
+          {% endif %}
+          {% if therapist.offers_phone_sessions %}
+            <div class="flex items-center text-purple-600">
+              <i class="fas fa-phone mr-3"></i>
+              <span>Phone Sessions Available</span>
+            </div>
+          {% endif %}
+          {% if therapist.offers_in_person %}
+            <div class="flex items-center text-orange-600">
+              <i class="fas fa-handshake mr-3"></i>
+              <span>In-Person Sessions Available</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Booking Form -->
+    <div class="lg:col-span-2">
+      <div class="booking-card rounded-3xl p-8 shadow-xl">
+        <!-- Progress Steps -->
+        <div class="mb-8">
+          <div class="flex justify-between items-center">
+            <div class="progress-step active" id="step-1-indicator">
+              <div class="step-circle">1</div>
+              <p class="text-sm font-semibold text-center">Session Type</p>
+            </div>
+            <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
+            <div class="progress-step" id="step-2-indicator">
+              <div class="step-circle">2</div>
+              <p class="text-sm font-semibold text-center">Date & Time</p>
+            </div>
+            <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
+            <div class="progress-step" id="step-3-indicator">
+              <div class="step-circle">3</div>
+              <p class="text-sm font-semibold text-center">Details</p>
+            </div>
+            <div class="flex-1 h-0.5 bg-gray-300 mx-4"></div>
+            <div class="progress-step" id="step-4-indicator">
+              <div class="step-circle">4</div>
+              <p class="text-sm font-semibold text-center">Confirm</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="booking-form" method="post">
+          {% csrf_token %}
+          
+          <!-- Step 1: Session Type -->
+          <div class="step-content" id="step-1">
+            <h2 class="text-2xl font-bold font-fredoka mb-6 text-gray-800">Choose Your Session Type</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {% if therapist.offers_video_sessions %}
+                <div class="session-type-option rounded-2xl p-6" data-value="VIDEO">
+                  <div class="text-center">
+                    <i class="fas fa-video text-3xl text-blue-500 mb-3"></i>
+                    <h3 class="font-bold font-fredoka mb-2">Video Session</h3>
+                    <p class="text-sm text-gray-600">Face-to-face session via secure video call</p>
+                  </div>
+                </div>
+              {% endif %}
+              
+              {% if therapist.offers_chat_sessions %}
+                <div class="session-type-option rounded-2xl p-6" data-value="CHAT">
+                  <div class="text-center">
+                    <i class="fas fa-comments text-3xl text-green-500 mb-3"></i>
+                    <h3 class="font-bold font-fredoka mb-2">Chat Session</h3>
+                    <p class="text-sm text-gray-600">Text-based therapy session</p>
+                  </div>
+                </div>
+              {% endif %}
+              
+              {% if therapist.offers_phone_sessions %}
+                <div class="session-type-option rounded-2xl p-6" data-value="PHONE">
+                  <div class="text-center">
+                    <i class="fas fa-phone text-3xl text-purple-500 mb-3"></i>
+                    <h3 class="font-bold font-fredoka mb-2">Phone Session</h3>
+                    <p class="text-sm text-gray-600">Audio-only phone consultation</p>
+                  </div>
+                </div>
+              {% endif %}
+              
+              {% if therapist.offers_in_person %}
+                <div class="session-type-option rounded-2xl p-6" data-value="IN_PERSON">
+                  <div class="text-center">
+                    <i class="fas fa-handshake text-3xl text-orange-500 mb-3"></i>
+                    <h3 class="font-bold font-fredoka mb-2">In-Person Session</h3>
+                    <p class="text-sm text-gray-600">Meet at the therapist's office</p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            
+            <input type="hidden" name="session_type" id="session_type" required>
+            
+            <div class="text-center">
+              <button type="button" class="btn-next px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50" disabled>
+                Continue to Date Selection
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Date & Time Selection -->
+          <div class="step-content hidden" id="step-2">
+            <h2 class="text-2xl font-bold font-fredoka mb-6 text-gray-800">Select Date & Time</h2>
+            
+            <!-- Calendar -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-4 font-fredoka">Choose a Date</h3>
+              <div id="calendar-container">
+                <div class="flex justify-between items-center mb-4">
+                  <button type="button" id="prev-month" class="p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <h4 class="text-lg font-semibold" id="current-month"></h4>
+                  <button type="button" id="next-month" class="p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                <div class="grid grid-cols-7 gap-2 mb-2">
+                  <div class="text-center font-semibold text-gray-600 p-2">Sun</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Mon</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Tue</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Wed</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Thu</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Fri</div>
+                  <div class="text-center font-semibold text-gray-600 p-2">Sat</div>
+                </div>
+                <div id="calendar-days" class="grid grid-cols-7 gap-2"></div>
+              </div>
+            </div>
+
+            <!-- Time Slots -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-4 font-fredoka">Available Time Slots</h3>
+              <div id="time-slots-container">
+                <p class="text-gray-500 text-center py-8">Please select a date first</p>
+              </div>
+            </div>
+
+            <input type="hidden" name="selected_date" id="selected_date" required>
+            <input type="hidden" name="selected_time" id="selected_time" required>
+
+            <div class="flex justify-between">
+              <button type="button" class="btn-back px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all">
+                <i class="fas fa-arrow-left mr-2"></i>Back
+              </button>
+              <button type="button" class="btn-next px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50" disabled>
+                Continue to Details
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Details and Notes -->
+          <div class="step-content hidden" id="step-3">
+            <h2 class="text-2xl font-bold font-fredoka mb-6 text-gray-800">Session Details</h2>
+            
+            <!-- Urgency Level -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-4 font-fredoka">How urgent is this appointment?</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="urgency-option rounded-xl p-4" data-value="LOW">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-300 mr-3 radio-indicator"></div>
+                    <div>
+                      <div class="font-semibold">Routine</div>
+                      <div class="text-sm text-gray-600">Within 2 weeks</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="urgency-option rounded-xl p-4" data-value="MEDIUM">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-300 mr-3 radio-indicator"></div>
+                    <div>
+                      <div class="font-semibold">Moderate</div>
+                      <div class="text-sm text-gray-600">Within 1 week</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="urgency-option rounded-xl p-4" data-value="HIGH">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-300 mr-3 radio-indicator"></div>
+                    <div>
+                      <div class="font-semibold">Urgent</div>
+                      <div class="text-sm text-gray-600">Within 2-3 days</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="urgency-option rounded-xl p-4" data-value="EMERGENCY">
+                  <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full border-2 border-gray-300 mr-3 radio-indicator"></div>
+                    <div>
+                      <div class="font-semibold text-red-600">Emergency</div>
+                      <div class="text-sm text-gray-600">As soon as possible</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <input type="hidden" name="urgency_level" id="urgency_level" value="LOW">
+
+            <!-- Patient Notes -->
+            <div class="mb-6">
+              <label class="block text-lg font-semibold mb-4 font-fredoka">What would you like to discuss? (Optional)</label>
+              <textarea 
+                name="patient_notes" 
+                rows="5" 
+                class="w-full px-4 py-3 rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500 transition"
+                placeholder="Please share what's on your mind, any specific concerns, or what you hope to achieve in this session. This helps the therapist prepare and provide better support."
+              ></textarea>
+              <p class="text-sm text-gray-500 mt-2">This information is confidential and helps your therapist prepare for your session.</p>
+            </div>
+
+            <div class="flex justify-between">
+              <button type="button" class="btn-back px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all">
+                <i class="fas fa-arrow-left mr-2"></i>Back
+              </button>
+              <button type="button" class="btn-next px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all">
+                Review Booking
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4: Confirmation -->
+          <div class="step-content hidden" id="step-4">
+            <h2 class="text-2xl font-bold font-fredoka mb-6 text-gray-800">Confirm Your Booking</h2>
+            
+            <div class="bg-gray-50 rounded-2xl p-6 mb-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 class="font-semibold mb-3 font-fredoka">Session Details</h3>
+                  <div class="space-y-2 text-sm">
+                    <div><strong>Therapist:</strong> Dr. {{ therapist.full_name }}</div>
+                    <div><strong>Session Type:</strong> <span id="confirm-session-type"></span></div>
+                    <div><strong>Date:</strong> <span id="confirm-date"></span></div>
+                    <div><strong>Time:</strong> <span id="confirm-time"></span></div>
+                    <div><strong>Duration:</strong> {{ therapist.session_duration }} minutes</div>
+                    <div><strong>Cost:</strong> ${{ therapist.hourly_rate }}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 class="font-semibold mb-3 font-fredoka">Next Steps</h3>
+                  <div class="space-y-2 text-sm">
+                    <div class="flex items-start">
+                      <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+                      <span>Your booking request will be sent to the therapist</span>
+                    </div>
+                    <div class="flex items-start">
+                      <i class="fas fa-envelope text-blue-500 mr-2 mt-0.5"></i>
+                      <span>You'll receive email confirmation within 24 hours</span>
+                    </div>
+                    <div class="flex items-start">
+                      <i class="fas fa-calendar-check text-purple-500 mr-2 mt-0.5"></i>
+                      <span>Session details will be shared once confirmed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-semibold">Total Cost</h4>
+                    <p class="text-sm text-gray-600">{{ therapist.session_duration }} minute session</p>
+                  </div>
+                  <div class="text-2xl font-bold text-green-600">${{ therapist.hourly_rate }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="mb-6">
+              <label class="flex items-start space-x-3">
+                <input type="checkbox" id="terms-checkbox" class="mt-1 text-purple-600 rounded focus:ring-purple-500" required>
+                <div class="text-sm text-gray-600">
+                  <span>I agree to the </span>
+                  <a href="#" class="text-purple-600 hover:text-purple-800">terms of service</a>
+                  <span> and </span>
+                  <a href="#" class="text-purple-600 hover:text-purple-800">privacy policy</a>
+                  <span>. I understand that this appointment is subject to therapist confirmation and cancellation policies apply.</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="flex justify-between">
+              <button type="button" class="btn-back px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all">
+                <i class="fas fa-arrow-left mr-2"></i>Back
+              </button>
+              <button type="submit" class="px-8 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold rounded-xl hover:from-green-600 hover:to-blue-600 transition-all shadow-lg">
+                <i class="fas fa-calendar-plus mr-2"></i>
+                Confirm Booking
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Booking form logic
+let currentStep = 1;
+const totalSteps = 4;
+const availabilityData = {{ availability_data|safe }};
+
+// Session type selection
+document.querySelectorAll('.session-type-option').forEach(option => {
+  option.addEventListener('click', function() {
+    document.querySelectorAll('.session-type-option').forEach(o => o.classList.remove('selected'));
+    this.classList.add('selected');
+    document.getElementById('session_type').value = this.dataset.value;
+    document.querySelector('#step-1 .btn-next').disabled = false;
+  });
+});
+
+// Urgency level selection
+document.querySelectorAll('.urgency-option').forEach(option => {
+  option.addEventListener('click', function() {
+    document.querySelectorAll('.urgency-option').forEach(o => {
+      o.classList.remove('selected');
+      o.querySelector('.radio-indicator').style.backgroundColor = 'transparent';
+    });
+    this.classList.add('selected');
+    this.querySelector('.radio-indicator').style.backgroundColor = '#f59e0b';
+    document.getElementById('urgency_level').value = this.dataset.value;
+  });
+});
+
+// Calendar functionality
+const calendar = {
+  currentDate: new Date(),
+  selectedDate: null,
+  
+  init() {
+    this.render();
+    document.getElementById('prev-month').addEventListener('click', () => this.prevMonth());
+    document.getElementById('next-month').addEventListener('click', () => this.nextMonth());
+  },
+  
+  render() {
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+    
+    document.getElementById('current-month').textContent = 
+      this.currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    
+    const daysContainer = document.getElementById('calendar-days');
+    daysContainer.innerHTML = '';
+    
+    // Empty cells for days before month starts
+    for (let i = 0; i < firstDay; i++) {
+      const emptyDay = document.createElement('div');
+      emptyDay.className = 'calendar-day unavailable';
+      daysContainer.appendChild(emptyDay);
+    }
+    
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayButton = document.createElement('div');
+      const dayDate = new Date(year, month, day);
+      const dateString = dayDate.toISOString().split('T')[0];
+      
+      dayButton.className = 'calendar-day';
+      dayButton.textContent = day;
+      
+      // Check if day is in the past
+      if (dayDate < today.setHours(0,0,0,0)) {
+        dayButton.classList.add('unavailable');
+      }
+      // Check if today
+      else if (dayDate.toDateString() === new Date().toDateString()) {
+        dayButton.classList.add('today');
+      }
+      
+      // Check if therapist has availability
+      if (availabilityData[dateString] && availabilityData[dateString].length > 0) {
+        dayButton.addEventListener('click', () => this.selectDate(dayDate, dayButton));
+      } else {
+        dayButton.classList.add('unavailable');
+      }
+      
+      daysContainer.appendChild(dayButton);
+    }
+  },
+  
+  selectDate(date, element) {
+    document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+    element.classList.add('selected');
+    this.selectedDate = date;
+    
+    const dateString = date.toISOString().split('T')[0];
+    document.getElementById('selected_date').value = dateString;
+    
+    this.loadTimeSlots(dateString);
+  },
+  
+  loadTimeSlots(dateString) {
+    const timeSlotsContainer = document.getElementById('time-slots-container');
+    const availableSlots = availabilityData[dateString] || [];
+    
+    if (availableSlots.length === 0) {
+      timeSlotsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No available time slots for this date</p>';
+      return;
+    }
+    
+    timeSlotsContainer.innerHTML = `
+      <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        ${availableSlots.map(time => `
+          <div class="time-slot" data-time="${time}">
+            ${this.formatTime(time)}
+          </div>
+        `).join('')}
+      </div>
+    `;
+    
+    // Add click handlers to time slots
+    document.querySelectorAll('.time-slot').forEach(slot => {
+      slot.addEventListener('click', function() {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('selected_time').value = this.dataset.time;
+        document.querySelector('#step-2 .btn-next').disabled = false;
+      });
+    });
+  },
+  
+  formatTime(timeString) {
+    const [hours, minutes] = timeString.split(':');
+    const time = new Date();
+    time.setHours(parseInt(hours), parseInt(minutes));
+    return time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  },
+  
+  prevMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+    this.render();
+  },
+  
+  nextMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+    this.render();
+  }
+};
+
+// Step navigation
+function showStep(step) {
+  document.querySelectorAll('.step-content').forEach(s => s.classList.add('hidden'));
+  document.getElementById(`step-${step}`).classList.remove('hidden');
+  
+  // Update progress indicators
+  document.querySelectorAll('.progress-step').forEach((s, index) => {
+    s.classList.remove('active', 'completed');
+    if (index + 1 < step) {
+      s.classList.add('completed');
+    } else if (index + 1 === step) {
+      s.classList.add('active');
+    }
+  });
+  
+  currentStep = step;
+  
+  // Update confirmation details
+  if (step === 4) {
+    updateConfirmationDetails();
+  }
+}
+
+function updateConfirmationDetails() {
+  const sessionTypeValue = document.getElementById('session_type').value;
+  const sessionTypes = {
+    'VIDEO': 'Video Session',
+    'CHAT': 'Chat Session', 
+    'PHONE': 'Phone Session',
+    'IN_PERSON': 'In-Person Session'
+  };
+  
+  document.getElementById('confirm-session-type').textContent = sessionTypes[sessionTypeValue] || '';
+  
+  const selectedDate = document.getElementById('selected_date').value;
+  if (selectedDate) {
+    const date = new Date(selectedDate);
+    document.getElementById('confirm-date').textContent = date.toLocaleDateString('en-US', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+  }
+  
+  const selectedTime = document.getElementById('selected_time').value;
+  if (selectedTime) {
+    document.getElementById('confirm-time').textContent = calendar.formatTime(selectedTime);
+  }
+}
+
+// Navigation buttons
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('btn-next')) {
+    if (currentStep < totalSteps) {
+      showStep(currentStep + 1);
+    }
+  } else if (e.target.classList.contains('btn-back')) {
+    if (currentStep > 1) {
+      showStep(currentStep - 1);
+    }
+  }
+});
+
+// Initialize calendar when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  calendar.init();
+  
+  // Set default urgency
+  document.querySelector('.urgency-option[data-value="LOW"]').click();
+});
+</script>
 {% endblock %}

@@ -2,169 +2,483 @@
 {% block content %}
 
 <style>
-    body {
-        background: linear-gradient(135deg, #f6f9fc, #e0eafc);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
+    /* ============================================
+    HOME PAGE STYLES V3 - GLASSMORPHISM REFINEMENT
+    ============================================ */
+
+    /* Keyframes for Animations */
+    @keyframes pulse-glow-deep {
+        0%, 100% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.3); }
+        50% { box-shadow: 0 0 70px rgba(139, 92, 246, 0.6); }
     }
 
-    .home-container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 2rem;
+    /* Hero Section Styles */
+    .hero-title {
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #4f46e5 0%, #a855f7 40%, #d946ef 70%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
-    .header-section {
-        text-align: center;
-        margin-bottom: 3rem;
-        animation: fadeInDown 1s ease-out;
+    .hero-subtitle {
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* ENHANCED GLASS CARD STYLING */
+    .glass-card-home {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1.5rem; /* 24px */
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden; /* For inner elements */
+    }
+    
+    .glass-card-home:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.45);
+        border-color: rgba(255, 255, 255, 0.3);
     }
 
-    .header-section h1 {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
+    .feature-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
+        color: white;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    .header-section p {
-        font-size: 1.2rem;
-        color: #555;
+    .glass-card-home:hover .feature-icon-wrapper {
+        transform: scale(1.1) rotate(-8deg);
+        box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.2);
     }
-
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        animation: fadeInUp 1s ease-in-out;
-    }
-
-    .feature-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        text-align: left;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
-
-    .feature-card h3 {
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-        color: #4c1d95;
-    }
-
-    .feature-card a {
-        display: inline-block;
-        margin-top: 1rem;
-        color: #6b21a8;
+    
+    .feature-link {
+        transition: all 0.3s ease;
         font-weight: 600;
-        text-decoration: none;
+    }
+    
+    .feature-link .arrow-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .glass-card-home:hover .feature-link {
+        letter-spacing: 0.5px;
+    }
+    
+    .glass-card-home:hover .arrow-icon {
+        transform: translateX(5px);
     }
 
-    .feature-card a:hover {
-        text-decoration: underline;
+    /* Quote Section Styles */
+    .quote-card {
+        background: linear-gradient(135deg, #6d28d9, #a855f7, #d946ef);
+        position: relative;
+        overflow: hidden;
     }
 
-    .quote-box {
-        background: #dbeafe;
-        padding: 1rem;
-        border-radius: 10px;
-        margin: 2rem 0;
-        text-align: center;
-        font-style: italic;
-        font-size: 1.1rem;
-        animation: fadeIn 1.2s;
+    .quote-card .quote-icon {
+        font-size: 8rem;
+        position: absolute;
+        top: -1.5rem;
+        left: 1rem;
+        opacity: 0.1;
+        transform: rotate(-15deg);
+    }
+    
+    /* How it Works Section */
+    .how-it-works-step {
+        position: relative;
+        padding-left: 3rem;
+    }
+    .how-it-works-step:not(:last-child) {
+        padding-bottom: 3rem;
+    }
+    .how-it-works-step::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        bottom: -20px;
+        width: 2px;
+        background-color: #e5e7eb;
+    }
+    .how-it-works-step:last-child::before {
+        display: none;
+    }
+    .step-number {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 42px;
+        height: 42px;
+        border: 2px solid #a855f7;
+        color: #a855f7;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-family: 'Fredoka', sans-serif;
     }
 
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+    /* Guiding Principles Section */
+    .principle-item .icon {
+        width: 48px;
+        height: 48px;
+        background-color: #f3e8ff;
+        color: #a855f7;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-right: 1rem;
+    }
+    
+    /* General Animation Utility */
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
     }
 
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    /* 📱 Mobile Responsive Adjustments */
-    @media (max-width: 600px) {
-        .header-section h1 {
-            font-size: 2rem;
-        }
-
-        .header-section p {
-            font-size: 1rem;
-            padding: 0 10px;
-        }
-
-        .quote-box {
-            font-size: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.3rem;
-        }
-
-        .feature-card a {
-            font-size: 0.95rem;
-        }
-
-        .home-container {
-            padding: 1rem;
-        }
+    .animate-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0);
     }
 </style>
 
-<div class="home-container">
-    <div class="header-section">
-        <h1>Welcome to Bloom 🌿</h1>
-        <p>Your mental wellness starts here. Track your mood, write journals, chat with our bot, and stay connected to positivity!</p>
-    </div>
-
-    <div class="quote-box">
-        🌟 {{ random_quote }}
-    </div>
-
-    <div class="features-grid">
-        <div class="feature-card">
-            <h3>Mood Tracker</h3>
-            <p>Keep tabs on how you feel every day and gain insights over time to boost your emotional awareness.</p>
-            <a href="{% url 'mood_tracker' %}">Track Mood →</a>
-        </div>
-
-        <div class="feature-card">
-            <h3>Bloom Bot 🤖</h3>
-            <p>Feeling low? Chat with Bloom Bot for supportive, uplifting conversation and a touch of AI-powered comfort.</p>
-            <a href="{% url 'chatbot_home' %}">Start Chatting →</a>
-        </div>
-
-        <div class="feature-card">
-            <h3>Journal</h3>
-            <p>Write your thoughts and experiences to reflect and improve mental clarity.</p>
-            <a href="{% url 'journal_list' %}">Write a Journal →</a>
-        </div>
-
-        <div class="feature-card">
-            <h3>Therapists 🧑‍⚕️</h3>
-            <p>Connect with professional therapists, read tips, and book sessions to support your mental health journey.</p>
-            <a href="{% url 'therapist_list' %}">Meet Therapists →</a>
-        </div>        
-
-        <div class="feature-card">
-            <h3>Insights</h3>
-            <p>View mood trends, journaling activity, and chatbot usage insights to track your wellness journey.</p>
-            <a href="{% url 'insights_home' %}">View Insights →</a>
+<!-- ======================= HERO SECTION ======================= -->
+<section class="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden py-24 sm:py-32">
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="animate-on-scroll">
+                <h1 class="hero-title text-5xl md:text-7xl font-bold font-pacifico mb-6 leading-tight">
+                    Your Journey to a Brighter Mind
+                </h1>
+                <p class="hero-subtitle text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto font-dm leading-relaxed">
+                    Nurture your mental wellness with powerful tools, compassionate support, and a community that understands.
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-on-scroll" style="transition-delay: 150ms;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'chatbot:chatbot_home' %}" class="btn-bloom w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl font-fredoka text-lg">
+                        <i class="fas fa-robot mr-3"></i> Chat with AI
+                    </a>
+                    <a href="{% url 'therapists:therapist_list' %}" class="btn-bloom w-full sm:w-auto px-8 py-4 bg-white text-gray-800 font-semibold rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 font-fredoka text-lg">
+                        <i class="fas fa-user-md mr-3 text-purple-600"></i> Book a Therapist
+                    </a>
+                {% else %}
+                    <a href="{% url 'signup' %}" class="btn-bloom w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl font-fredoka text-lg">
+                        <i class="fas fa-rocket mr-3"></i> Start Your Journey Free
+                    </a>
+                    <a href="{% url 'login' %}" class="btn-bloom w-full sm:w-auto px-8 py-4 bg-white text-gray-800 font-semibold rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 font-fredoka text-lg">
+                        Sign In <i class="fas fa-arrow-right ml-3"></i>
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- ======================= INSPIRATIONAL QUOTE SECTION ======================= -->
+<section class="py-24 sm:py-32">
+    <div class="container mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-12 animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">A Moment of Inspiration</h2>
+        </div>
+        <div class="max-w-4xl mx-auto animate-on-scroll" style="transition-delay: 150ms;">
+            <div class="quote-card rounded-3xl p-10 md:p-16 text-white text-center shadow-2xl shadow-purple-500/20">
+                <i class="fas fa-quote-left quote-icon"></i>
+                <div class="relative z-10">
+                    <blockquote class="text-2xl md:text-3xl font-medium font-fredoka leading-relaxed mb-6">
+                        "{{ random_quote }}"
+                    </blockquote>
+                    <div class="inline-block w-24 h-1 bg-white/50 rounded-full mb-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= FEATURES SECTION ======================= -->
+<section class="py-24 sm:py-32">
+    <div class="container mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">Your Wellness Toolkit</h2>
+            <p class="text-lg text-gray-600 font-dm leading-relaxed">
+                Everything you need to understand, manage, and improve your mental health, all in one place.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <!-- Bloom Bot AI Card -->
+            <div class="glass-card-home p-8 animate-on-scroll">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-sky-500 to-blue-600 shadow-lg shadow-sky-500/30">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Bloom Bot AI</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    Your 24/7 AI companion for guided exercises, thoughtful conversation, and immediate support.
+                </p>
+                <a href="{% url 'chatbot:chatbot_home' %}" class="feature-link text-sky-600 inline-flex items-center">
+                    Chat with Bot <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Personal Journal Card -->
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 100ms;">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Personal Journal</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    A private, secure space to write down your thoughts, process feelings, and reflect on your day.
+                </p>
+                <a href="{% url 'journal_list' %}" class="feature-link text-amber-600 inline-flex items-center">
+                    Open Your Journal <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+            
+            <!-- Professional Therapists Card -->
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 200ms;">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-500/30">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Expert Therapists</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    Connect with licensed professionals for expert guidance and personalized therapy sessions.
+                </p>
+                <a href="{% url 'therapists:therapist_list' %}" class="feature-link text-purple-600 inline-flex items-center">
+                    Find a Therapist <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Wellness Insights Card -->
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 300ms;">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-rose-500 to-pink-600 shadow-lg shadow-rose-500/30">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Wellness Insights</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    See your progress with beautiful charts that turn your journal entries into actionable insights.
+                </p>
+                <a href="{% url 'insights_home' %}" class="feature-link text-rose-600 inline-flex items-center">
+                    View Your Insights <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Guided Meditations Card -->
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 400ms;">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/30">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Guided Meditations</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    Access a library of guided sessions to help you reduce stress, improve focus, and find calm.
+                </p>
+                <a href="#" class="feature-link text-emerald-600 inline-flex items-center">
+                    Find Your Calm <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+
+            <!-- Supportive Community Card -->
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 500ms;">
+                <div class="feature-icon-wrapper bg-gradient-to-br from-cyan-500 to-teal-600 shadow-lg shadow-cyan-500/30">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-4">Community</h3>
+                <p class="text-gray-600 mb-6 font-dm leading-relaxed">
+                    Join peer support groups. Share your journey and grow with others in a safe, anonymous space.
+                </p>
+                <a href="#" class="feature-link text-cyan-600 inline-flex items-center">
+                    Join the Community <i class="fas fa-arrow-right ml-2 arrow-icon"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= HOW IT WORKS SECTION (NEW) ======================= -->
+<section class="py-24 sm:py-32 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">How Bloom Works</h2>
+            <p class="text-lg text-gray-600 font-dm leading-relaxed">
+                Starting your mental wellness journey is simple. Here’s how you can begin to transform your life with Bloom.
+            </p>
+        </div>
+        <div class="max-w-2xl mx-auto animate-on-scroll">
+            <div class="how-it-works-step">
+                <div class="step-number">1</div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-3">Explore Your Tools</h3>
+                <p class="text-gray-600 font-dm leading-relaxed">
+                    Begin by writing in your journal or chatting with the AI Bot. These tools are designed to help you understand your feelings from day one.
+                </p>
+            </div>
+            <div class="how-it-works-step">
+                <div class="step-number">2</div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-3">Gain Powerful Insights</h3>
+                <p class="text-gray-600 font-dm leading-relaxed">
+                    As you use the app, Bloom analyzes your entries to provide personalized insights and visualizations, helping you see patterns and progress over time.
+                </p>
+            </div>
+            <div class="how-it-works-step">
+                <div class="step-number">3</div>
+                <h3 class="text-2xl font-bold font-fredoka text-gray-800 mb-3">Get Professional Support</h3>
+                <p class="text-gray-600 font-dm leading-relaxed">
+                    When you're ready, connect with our network of licensed therapists for expert guidance tailored to your specific needs and goals.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= GUIDING PRINCIPLES SECTION (NEW) ======================= -->
+<section class="py-24 sm:py-32">
+    <div class="container mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="animate-on-scroll">
+                <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">Our Guiding Principles</h2>
+                <p class="text-lg text-gray-600 font-dm leading-relaxed mb-8">
+                    We built Bloom on a foundation of trust, compassion, and scientific rigor. Your well-being is at the heart of everything we do.
+                </p>
+                <div class="space-y-6">
+                    <div class="flex items-start principle-item">
+                        <div class="icon"><i class="fas fa-universal-access"></i></div>
+                        <div>
+                            <h4 class="font-bold font-fredoka text-xl text-gray-800">Accessible to All</h4>
+                            <p class="text-gray-600 font-dm">We believe quality mental health tools should be available to everyone, everywhere.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start principle-item">
+                        <div class="icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <div>
+                            <h4 class="font-bold font-fredoka text-xl text-gray-800">Rooted in Compassion</h4>
+                            <p class="text-gray-600 font-dm">Our platform is a judgment-free zone designed to provide comfort and support.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start principle-item">
+                        <div class="icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h4 class="font-bold font-fredoka text-xl text-gray-800">Secure & Private</h4>
+                            <p class="text-gray-600 font-dm">Your data is yours. We use state-of-the-art security to protect your privacy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="animate-on-scroll" style="transition-delay: 200ms;">
+                <img src="https://placehold.co/600x500/f3e8ff/a855f7?text=Bloom+Principles" alt="Illustration of a person meditating peacefully" class="rounded-3xl shadow-2xl">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= TESTIMONIALS SECTION ======================= -->
+<section class="py-24 sm:py-32 bg-gray-50">
+    <div class="container mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">Stories of Growth</h2>
+            <p class="text-lg text-gray-600 font-dm leading-relaxed">
+                Real experiences from community members who have found their path to a brighter mind with Bloom.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="glass-card-home p-8 animate-on-scroll">
+                <div class="flex items-center mb-4">
+                    <img src="https://placehold.co/64x64/a855f7/ffffff?text=SM" alt="Sarah M." class="testimonial-avatar">
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 font-fredoka text-lg">Sarah M.</h4>
+                        <p class="text-sm text-gray-500 font-dm">University Student</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic font-dm leading-relaxed">
+                    "The AI bot is surprisingly comforting on tough days. It’s like having a non-judgmental friend in my pocket, available anytime I need to talk."
+                </blockquote>
+            </div>
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 150ms;">
+                <div class="flex items-center mb-4">
+                    <img src="https://placehold.co/64x64/3b82f6/ffffff?text=DR" alt="David R." class="testimonial-avatar">
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 font-fredoka text-lg">David R.</h4>
+                        <p class="text-sm text-gray-500 font-dm">Software Developer</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic font-dm leading-relaxed">
+                    "Journaling on Bloom has become my daily ritual. It's so much more than a diary; the insights it provides have genuinely helped me manage work stress."
+                </blockquote>
+            </div>
+            <div class="glass-card-home p-8 animate-on-scroll" style="transition-delay: 300ms;">
+                <div class="flex items-center mb-4">
+                    <img src="https://placehold.co/64x64/10b981/ffffff?text=EK" alt="Dr. Emily K." class="testimonial-avatar">
+                    <div class="ml-4">
+                        <h4 class="font-bold text-gray-800 font-fredoka text-lg">Dr. Emily K.</h4>
+                        <p class="text-sm text-gray-500 font-dm">Clinical Psychologist</p>
+                    </div>
+                </div>
+                <blockquote class="text-gray-600 italic font-dm leading-relaxed">
+                    "I recommend Bloom to my patients as a supplementary tool. Its user-friendly design and comprehensive features empower individuals to take an active role in their therapy."
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= CTA SECTION ======================= -->
+{% if not user.is_authenticated %}
+<section class="py-24 sm:py-32">
+    <div class="container mx-auto px-6">
+        <div class="cta-section rounded-3xl p-12 md:p-20 text-center text-white relative overflow-hidden animate-on-scroll">
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse-glow-deep">
+                    <i class="fas fa-seedling text-5xl"></i>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold font-fredoka mb-6 leading-tight">
+                    Ready to Begin Your Transformation?
+                </h2>
+                <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto opacity-80 leading-relaxed font-dm">
+                    Take the first step towards a healthier, happier mind. Join Bloom today and unlock the tools you need to thrive.
+                </p>
+                <a href="{% url 'signup' %}" class="cta-btn inline-block px-10 py-5 font-bold rounded-full shadow-2xl font-fredoka text-xl">
+                    <i class="fas fa-user-plus mr-3"></i> Create Your Free Account
+                </a>
+                <p class="mt-6 text-sm opacity-60 font-dm">No credit card required • Secure & Confidential</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ======================= JAVASCRIPT ======================= -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Scroll Animations ---
+    const scrollElements = document.querySelectorAll('.animate-on-scroll');
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    scrollElements.forEach(el => scrollObserver.observe(el));
+
+});
+</script>
 
 {% endblock %}
+

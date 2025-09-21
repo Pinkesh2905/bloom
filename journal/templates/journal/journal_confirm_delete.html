@@ -65,7 +65,7 @@
 
 <div class="delete-container">
   <h2>🗑️ Delete Entry</h2>
-  <p>Are you sure you want to delete "<strong>{{ journal.title }}</strong>"?</p>
+  <p>Are you sure you want to delete "<strong>{{ journal.title }}</strong>"? This action cannot be undone.</p>
 
   <form method="post">
     {% csrf_token %}

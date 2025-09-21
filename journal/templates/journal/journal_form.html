@@ -1,104 +1,132 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
+
 {% block content %}
-
 <style>
-  .form-container {
-    max-width: 720px;
-    margin: 3rem auto;
-    padding: 2rem 2.5rem;
-    background: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  .form-container h2 {
-    text-align: center;
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 1.8rem;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  input[type="text"],
-  textarea {
-    padding: 0.8rem;
-    margin-bottom: 1.2rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border 0.3s ease;
-  }
-
-  input[type="text"]:focus,
-  textarea:focus {
-    border-color: #2563eb;
-    outline: none;
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 150px;
-  }
-
-  button {
-    background-color: #10b981;
-    color: white;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.05rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-
-  button:hover {
-    background-color: #059669;
-  }
-
-  .back-link {
-    margin-top: 1.5rem;
-    text-align: center;
-  }
-
-  .back-link a {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .back-link a:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 600px) {
+    body {
+        background-color: #f4f7f6;
+    }
     .form-container {
-      padding: 1.5rem 1.2rem;
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 2.5rem;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+        font-family: 'Segoe UI', sans-serif;
     }
-
     .form-container h2 {
-      font-size: 1.6rem;
+        text-align: center;
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 2rem;
+        font-weight: 600;
     }
-  }
+    .form-field {
+        margin-bottom: 1.5rem;
+    }
+    .form-field label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+        border-color: #4A90E2;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        outline: none;
+    }
+    .form-field textarea {
+        min-height: 180px;
+        resize: vertical;
+    }
+    .checkbox-field {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .checkbox-field label {
+        margin-bottom: 0;
+    }
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+    }
+    .btn {
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+    .btn-save {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .btn-save:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+    }
+    .btn-back {
+        background-color: transparent;
+        color: #555;
+        font-size: 1rem;
+    }
+    .btn-back:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <div class="form-container">
-  <h2>{% if form.instance.pk %}✏️ Edit{% else %}📝 New{% endif %} Journal Entry</h2>
+    <h2>{% if form.instance.pk %}✏️ Edit Entry{% else %}📝 Create New Entry{% endif %}</h2>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">💾 Save Entry</button>
-  </form>
+    <form method="post">
+        {% csrf_token %}
 
-  <div class="back-link">
-    <a href="{% url 'journal_list' %}">← Back to Entries</a>
-  </div>
+        <div class="form-field">
+            {{ form.title.label_tag }}
+            {% render_field form.title class="form-control" placeholder="A day to remember..." %}
+        </div>
+        <div class="form-field">
+            {{ form.content.label_tag }}
+            {% render_field form.content class="form-control" placeholder="Write about your thoughts and feelings..." %}
+        </div>
+        <div class="form-field">
+            {{ form.mood.label_tag }}
+            {% render_field form.mood class="form-control" %}
+        </div>
+        <div class="form-field">
+            {{ form.tags_input.label_tag }}
+            {% render_field form.tags_input class="form-control" %}
+            <small class="form-text text-muted">{{ form.tags_input.help_text }}</small>
+        </div>
+        <div class="form-field checkbox-field">
+            {% render_field form.is_favorite %}
+            <label for="{{ form.is_favorite.id_for_label }}">Mark as Favorite</label>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'journal_list' %}" class="btn btn-back">← Back to List</a>
+            <button type="submit" class="btn btn-save">💾 Save Entry</button>
+        </div>
+    </form>
 </div>
-
 {% endblock %}
+

@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="glass-strong rounded-3xl shadow-2xl overflow-hidden animate-bounce-in">
+
+        <!-- Header -->
+        <div class="p-6 md:p-8 border-b border-gray-200/60">
+            <div class="text-center">
+                <div class="inline-block bg-neon-gradient p-1 rounded-2xl mb-4">
+                    <div class="bg-white/80 rounded-xl p-4">
+                        <i class="fas fa-user-md text-purple-600 text-4xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-4xl font-fredoka font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Become a Bloom Therapist
+                </h1>
+                <p class="text-gray-500 font-dm mt-2">Join our community of licensed professionals and help others thrive.</p>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="px-6 md:px-12 py-4 bg-white/30">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-500" style="width: 25%"></div>
+            </div>
+            <div id="step-title" class="text-center text-sm font-semibold text-gray-600 font-dm mt-2">Step 1 of 4: Account Information</div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="p-6 md:p-10" id="signup-form">
+            {% csrf_token %}
+
+            <!-- General Form Errors -->
+            {% if form.non_field_errors %}
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 font-dm" role="alert">
+                    <p class="font-bold">Please correct the following errors:</p>
+                    <ul class="list-disc list-inside">
+                    {% for error in form.non_field_errors %}
+                        <li class="error-message">{{ error }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <!-- Step 1: Account Information -->
+            <div class="form-step active" data-step="1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    <div class="form-field-wrapper">
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.first_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-field-wrapper">
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.last_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-field-wrapper md:col-span-2">
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+                     <div class="form-field-wrapper">
+                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.password1.label }}</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.password1.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="form-field-wrapper">
+                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.password2.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Professional Details -->
+            <div class="form-step" data-step="2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    <div class="md:col-span-2">
+                        <label for="{{ form.license_number.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.license_number.label }}</label>
+                        {{ form.license_number }}
+                        {% if form.license_number.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.license_number.errors.0 }}</div>{% endif %}
+                    </div>
+                     <div>
+                        <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.phone_number.label }}</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.phone_number.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.years_experience.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.years_experience.label }}</label>
+                        {{ form.years_experience }}
+                        {% if form.years_experience.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.years_experience.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.hourly_rate.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.hourly_rate.label }}</label>
+                        {{ form.hourly_rate }}
+                         {% if form.hourly_rate.help_text %}<p class="text-xs text-gray-500 mt-1 font-dm">{{ form.hourly_rate.help_text }}</p>{% endif %}
+                        {% if form.hourly_rate.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.hourly_rate.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="md:col-span-2">
+                         <label for="{{ form.bio.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.bio.label }}</label>
+                         {{ form.bio }}
+                         {% if form.bio.help_text %}<p class="text-xs text-gray-500 mt-1 font-dm">{{ form.bio.help_text }}</p>{% endif %}
+                         {% if form.bio.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.bio.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="md:col-span-2 text-center">
+                        <label class="block text-sm font-medium text-gray-700 font-dm mb-2">Profile Picture</label>
+                        <img id="imagePreview" src="https://placehold.co/128x128/E1E4F2/7B84A3?text=Upload" alt="Profile Preview" class="w-32 h-32 object-cover rounded-full mx-auto border-4 border-white shadow-lg mb-4">
+                        {{ form.profile_picture }}
+                        {% if form.profile_picture.help_text %}<p class="text-xs text-gray-500 mt-1 font-dm">{{ form.profile_picture.help_text }}</p>{% endif %}
+                        {% if form.profile_picture.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.profile_picture.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Expertise -->
+            <div class="form-step" data-step="3">
+                 <div class="space-y-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 font-dm mb-3">{{ form.specializations.label }}</label>
+                        <div class="pill-container" id="specializations-pills">
+                            {% for value, text in form.specializations.field.choices %}
+                            <div class="pill" data-value="{{ value }}">{{ text }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="hidden">{{ form.specializations }}</div>
+                        {% if form.specializations.help_text %}<p class="text-xs text-gray-500 mt-2 font-dm">{{ form.specializations.help_text }}</p>{% endif %}
+                        {% if form.specializations.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.specializations.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 font-dm mb-3">{{ form.qualifications.label }}</label>
+                        <div class="pill-container" id="qualifications-pills">
+                             {% for value, text in form.qualifications.field.choices %}
+                            <div class="pill" data-value="{{ value }}">{{ text }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="hidden">{{ form.qualifications }}</div>
+                        {% if form.qualifications.help_text %}<p class="text-xs text-gray-500 mt-2 font-dm">{{ form.qualifications.help_text }}</p>{% endif %}
+                        {% if form.qualifications.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.qualifications.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 font-dm mb-3">{{ form.languages_spoken.label }}</label>
+                         <div class="pill-container" id="languages-pills">
+                             {% for value, text in form.languages_spoken.field.choices %}
+                            <div class="pill" data-value="{{ value }}">{{ text }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="hidden">{{ form.languages_spoken }}</div>
+                        {% if form.languages_spoken.help_text %}<p class="text-xs text-gray-500 mt-2 font-dm">{{ form.languages_spoken.help_text }}</p>{% endif %}
+                        {% if form.languages_spoken.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.languages_spoken.errors.0 }}</div>{% endif %}
+                    </div>
+                 </div>
+            </div>
+            
+            <!-- Step 4: Availability & Services -->
+            <div class="form-step" data-step="4">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 font-dm mb-2">Services Offered</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="checkbox-wrapper">{{ form.offers_video_sessions }} <label for="{{ form.offers_video_sessions.id_for_label }}">{{ form.offers_video_sessions.label }}</label></div>
+                            <div class="checkbox-wrapper">{{ form.offers_chat_sessions }} <label for="{{ form.offers_chat_sessions.id_for_label }}">{{ form.offers_chat_sessions.label }}</label></div>
+                            <div class="checkbox-wrapper">{{ form.offers_phone_sessions }} <label for="{{ form.offers_phone_sessions.id_for_label }}">{{ form.offers_phone_sessions.label }}</label></div>
+                            <div class="checkbox-wrapper">{{ form.offers_in_person }} <label for="{{ form.offers_in_person.id_for_label }}">{{ form.offers_in_person.label }}</label></div>
+                        </div>
+                    </div>
+
+                    <div id="office_address_wrapper" class="hidden">
+                        <label for="{{ form.office_address.id_for_label }}" class="block text-sm font-semibold text-gray-700 font-dm mb-2">{{ form.office_address.label }}</label>
+                        {{ form.office_address }}
+                        {% if form.office_address.errors %}<div class="text-red-500 text-sm mt-1 font-dm error-message">{{ form.office_address.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="checkbox-wrapper">
+                         {{ form.accepts_insurance }} <label for="{{ form.accepts_insurance.id_for_label }}">{{ form.accepts_insurance.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-10 pt-6 border-t border-gray-200/80 flex items-center justify-between">
+                <button type="button" id="prev-btn" class="w-auto text-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl transition-all duration-300 font-dm font-semibold focus-ring hidden">
+                    <i class="fas fa-arrow-left mr-2"></i>Back
+                </button>
+                <button type="button" id="next-btn" class="w-auto ml-auto text-center btn-modern px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-2xl hover:from-blue-600 hover:to-purple-600 shadow-lg font-dm focus-ring">
+                    Next<i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                <button type="submit" id="submit-btn" class="w-auto ml-auto text-center btn-modern px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-2xl hover:from-purple-600 hover:to-pink-600 shadow-lg font-dm focus-ring hidden">
+                    <i class="fas fa-check-circle mr-2"></i>Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-step { display: none; }
+    .form-step.active { display: block; animation: fadeInUp 0.5s ease-out; }
+
+    /* General Form Styling */
+    select, input[type="text"], input[type="email"], input[type="number"], input[type="password"], textarea, input[type="file"] {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #374151;
+        background-color: rgba(255, 255, 255, 0.5);
+        border: 1px solid #d1d5db;
+        border-radius: 1rem;
+        transition: all 0.3s;
+    }
+    input[type="file"] {
+        padding: 0.5rem;
+    }
+    select:focus, input:focus, textarea:focus {
+        border-color: #a78bfa;
+        box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.4);
+        outline: none;
+    }
+    
+    /* Pill/Tag Selector Styling */
+    .pill-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .pill {
+        padding: 0.5rem 1.25rem;
+        border-radius: 9999px;
+        background-color: #f3f4f6;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        font-weight: 500;
+        border: 1px solid #e5e7eb;
+        font-family: 'DM Sans', sans-serif;
+    }
+    .pill:hover {
+        background-color: #e5e7eb;
+        transform: translateY(-2px);
+    }
+    .pill.selected {
+        background-color: #8b5cf6;
+        color: white;
+        border-color: #8b5cf6;
+        box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.3);
+    }
+    .hidden {
+        display: none;
+    }
+
+
+    /* Custom Checkbox Styling */
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 1rem;
+        border: 1px solid #d1d5db;
+    }
+    
+    .checkbox-wrapper input[type="checkbox"] {
+        appearance: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 2px solid #d1d5db;
+        border-radius: 0.5rem;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    .checkbox-wrapper input[type="checkbox"]:checked {
+        background-color: #8b5cf6;
+        border-color: #8b5cf6;
+    }
+    .checkbox-wrapper input[type="checkbox"]:checked::after {
+        content: '✔';
+        color: white;
+        font-size: 1rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .checkbox-wrapper label {
+        font-family: 'DM Sans', sans-serif;
+        color: #374151;
+        font-weight: 500;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const formSteps = document.querySelectorAll('.form-step');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const stepTitle = document.getElementById('step-title');
+    let currentStep = 1;
+
+    const stepTitles = [
+        "Step 1 of 4: Account Information",
+        "Step 2 of 4: Professional Details",
+        "Step 3 of 4: Expertise",
+        "Step 4 of 4: Availability & Services"
+    ];
+
+    function updateFormSteps() {
+        formSteps.forEach(step => {
+            step.classList.toggle('active', parseInt(step.dataset.step) === currentStep);
+        });
+
+        const progressPercentage = (currentStep / formSteps.length) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        stepTitle.textContent = stepTitles[currentStep - 1];
+
+        prevBtn.classList.toggle('hidden', currentStep === 1);
+        nextBtn.classList.toggle('hidden', currentStep === formSteps.length);
+        submitBtn.classList.toggle('hidden', currentStep !== formSteps.length);
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < formSteps.length) {
+            currentStep++;
+            updateFormSteps();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+            currentStep--;
+            updateFormSteps();
+        }
+    });
+
+    // Image preview script
+    const imageInput = document.getElementById('id_profile_picture');
+    const imagePreview = document.getElementById('imagePreview');
+    if(imageInput && imagePreview) {
+        imageInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+    }
+    
+    // Toggle office address field
+    const offersInPersonCheckbox = document.getElementById('id_offers_in_person');
+    const officeAddressWrapper = document.getElementById('office_address_wrapper');
+    if (offersInPersonCheckbox && officeAddressWrapper) {
+        function toggleOfficeAddress() {
+            if(offersInPersonCheckbox.checked) {
+                officeAddressWrapper.classList.remove('hidden');
+            } else {
+                officeAddressWrapper.classList.add('hidden');
+            }
+        }
+        offersInPersonCheckbox.addEventListener('change', toggleOfficeAddress);
+        toggleOfficeAddress(); // Initial check
+    }
+
+    // Pill Selector Logic
+    function setupPillSelector(containerId, formField) {
+        const container = document.getElementById(containerId);
+        if (!container || !formField) return;
+
+        const checkboxes = formField.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            const pill = container.querySelector(`.pill[data-value="${checkbox.value}"]`);
+            if (pill && checkbox.checked) {
+                pill.classList.add('selected');
+            }
+        });
+
+        container.addEventListener('click', function(event) {
+            if (event.target.classList.contains('pill')) {
+                const pill = event.target;
+                const value = pill.dataset.value;
+                pill.classList.toggle('selected');
+                const targetCheckbox = Array.from(checkboxes).find(cb => cb.value === value);
+                if (targetCheckbox) {
+                    targetCheckbox.checked = !targetCheckbox.checked;
+                }
+            }
+        });
+    }
+
+    setupPillSelector('specializations-pills', document.querySelector('#id_specializations')?.parentElement);
+    setupPillSelector('qualifications-pills', document.querySelector('#id_qualifications')?.parentElement);
+    setupPillSelector('languages-pills', document.querySelector('#id_languages_spoken')?.parentElement);
+
+    // --- CRITICAL FIX: Error Handling Logic ---
+    const firstError = document.querySelector('.error-message');
+    if (firstError) {
+        const errorStep = firstError.closest('.form-step');
+        if (errorStep) {
+            currentStep = parseInt(errorStep.dataset.step);
+        }
+    }
+
+    updateFormSteps();
+});
+</script>
+
+{% endblock %}
+

@@ -1,132 +1,210 @@
 {% extends 'base.html' %}
+
 {% block content %}
-
 <style>
-  .journal-container {
-    max-width: 850px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  h2 {
-    text-align: center;
-    font-size: 2rem;
-    color: #4a4a4a;
-    margin-bottom: 1.5rem;
-  }
-
-  .journal-entry {
-    border-bottom: 1px solid #ddd;
-    padding: 1.2rem 0;
-  }
-
-  .journal-entry:last-child {
-    border-bottom: none;
-  }
-
-  .journal-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.3rem;
-  }
-
-  .journal-content {
-    color: #555;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
-    word-wrap: break-word;
-  }
-
-  .journal-meta {
-    font-size: 0.85rem;
-    color: #999;
-    margin-bottom: 0.4rem;
-  }
-
-  .actions {
-    margin-top: 0.3rem;
-  }
-
-  .actions a {
-    margin-right: 1rem;
-    font-size: 0.95rem;
-    text-decoration: none;
-    color: #4a90e2;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-
-  .actions a:hover {
-    color: #256fcb;
-    text-decoration: underline;
-  }
-
-  .add-btn {
-    display: inline-block;
-    margin-top: 2rem;
-    padding: 0.6rem 1.2rem;
-    background-color: #6c63ff;
-    color: white;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-  }
-
-  .add-btn:hover {
-    background-color: #564ce1;
-  }
-
-  @media (max-width: 600px) {
+    body {
+        background-color: #f8f9fa;
+    }
     .journal-container {
-      padding: 1.5rem 1rem;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
     }
-
-    .journal-title {
-      font-size: 1.2rem;
+    .journal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
-
-    .journal-content {
-      font-size: 0.95rem;
+    .journal-header h2 {
+        font-size: 2.5rem;
+        color: #343a40;
+        margin: 0;
     }
-
     .add-btn {
-      width: 90%;
-      text-align: center;
+        background-color: #007bff;
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
     }
-  }
+    .add-btn:hover {
+        background-color: #0056b3;
+    }
+    .filters-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .search-form {
+        flex-grow: 1;
+    }
+    .search-input {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .tag-link {
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+    }
+    .tag-link:hover, .tag-link.active {
+        background-color: #6c757d;
+        color: white;
+    }
+    .journal-entry {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-left: 5px solid #007bff;
+    }
+    .entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+    .journal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    .journal-meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    .journal-content {
+        color: #555;
+        line-height: 1.6;
+    }
+    .entry-footer {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .entry-tags a {
+        margin-right: 0.5rem;
+    }
+    .entry-actions a {
+        margin-left: 1rem;
+        color: #007bff;
+        text-decoration: none;
+    }
+    .entry-actions a:hover {
+        text-decoration: underline;
+    }
+    .pagination {
+        justify-content: center;
+        margin-top: 2rem;
+    }
 </style>
 
 <div class="journal-container">
-  <h2>📝 My Journal Entries</h2>
-
-  {% for entry in entries %}
-    <div class="journal-entry">
-      <div class="journal-title">{{ entry.title }}</div>
-      <div class="journal-content">{{ entry.content|truncatewords:40 }}</div>
-      <div class="journal-meta">
-        Created: {{ entry.date_created|date:"M d, Y H:i" }}<br>
-        {% if entry.date_updated != entry.date_created %}
-          Last Updated: {{ entry.date_updated|date:"M d, Y H:i" }}
-        {% endif %}
-      </div>
-      <div class="actions">
-        <a href="{% url 'journal_edit' entry.pk %}">✏️ Edit</a>
-        <a href="{% url 'journal_delete' entry.pk %}">🗑️ Delete</a>
-      </div>
+    <div class="journal-header">
+        <h2>📝 My Journal</h2>
+        <a class="add-btn" href="{% url 'journal_create' %}">➕ Add New Entry</a>
     </div>
-  {% empty %}
-    <p style="text-align: center; color: #888;">No journal entries yet. Start writing your thoughts today 💭</p>
-  {% endfor %}
 
-  <a class="add-btn" href="{% url 'journal_create' %}">➕ Add New Entry</a>
+    <!-- Filters Section -->
+    <div class="filters-container">
+        <form class="search-form" method="get" action="{% url 'journal_list' %}">
+            <input class="search-input" type="text" name="q" value="{{ search_query }}" placeholder="Search entries...">
+        </form>
+        <div class="tags-list">
+            <strong>Filter by Tag:</strong>
+            {% for tag in all_tags %}
+                {# This is the corrected link #}
+                <a href="{% url 'journal_list' %}?tag={{ tag.name }}"
+                   class="tag-link {% if tag_filter == tag.name %}active{% endif %}">
+                    {{ tag.name }}
+                </a>
+            {% endfor %}
+            {% if tag_filter %}
+                <a href="{% url 'journal_list' %}" class="tag-link">Clear</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% for entry in entries %}
+    <div class="journal-entry">
+        <div class="entry-header">
+            <a href="{{ entry.get_absolute_url }}" style="text-decoration: none;">
+                <h3 class="journal-title">{{ entry.title }}</h3>
+            </a>
+            <div class="entry-actions">
+                <a href="{% url 'journal_edit' entry.pk %}">✏️ Edit</a>
+                <a href="{% url 'journal_delete' entry.pk %}">🗑️ Delete</a>
+            </div>
+        </div>
+        <div class="journal-meta">
+            {{ entry.date_created|date:"F d, Y" }} | {{ entry.mood }}
+            {% if entry.is_favorite %}⭐{% endif %}
+        </div>
+        <div class="journal-content">
+            {{ entry.content|truncatewords:50|linebreaks }}
+        </div>
+        <div class="entry-footer">
+            <div class="entry-tags">
+                {% for tag in entry.tags.all %}
+                     <a href="{% url 'journal_list' %}?tag={{ tag.name }}" class="tag-link">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p style="text-align: center; color: #888; padding: 2rem;">No journal entries yet. Start writing your thoughts today!</p>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
 </div>
-
 {% endblock %}
+

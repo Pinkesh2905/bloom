@@ -5,204 +5,881 @@
   <meta charset="UTF-8">
   <title>Bloom | Mental Wellness</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
-
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Modern Fun Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Pacifico&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    body {
-      margin: 0;
-      font-family: 'Quicksand', sans-serif;
-      background: #fdfdfd;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    
+    /* Enhanced Animations */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    @keyframes rotateGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(180deg); }
+    }
+    
+    @keyframes morphBackground {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    }
+    
+    @keyframes slideInFromBottom {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes slideInFromLeft {
+      from { transform: translateX(-100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes slideInFromRight {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes fadeInScale {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 20px rgba(192, 38, 211, 0.4); }
+      50% { text-shadow: 0 0 30px rgba(192, 38, 211, 0.7); }
+    }
+    
+    /* Background Particles Animation */
+    @keyframes particle1 {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+    
+    @keyframes particle2 {
+      0% { transform: translateY(100vh) rotate(0deg) scale(0); opacity: 0; }
+      10% { opacity: 0.7; transform: scale(1); }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(-100vh) rotate(-360deg) scale(0); opacity: 0; }
+    }
+    
+    /* Animation Classes */
+    .animate-gentle-float { animation: gentleFloat 6s ease-in-out infinite; }
+    .animate-rotate-glow { animation: rotateGlow 20s linear infinite; }
+    .animate-sparkle { animation: sparkle 2s ease-in-out infinite; }
+    .animate-morph { animation: morphBackground 8s ease-in-out infinite; }
+    .animate-slide-up { animation: slideInFromBottom 0.8s ease-out forwards; }
+    .animate-slide-left { animation: slideInFromLeft 0.8s ease-out forwards; }
+    .animate-slide-right { animation: slideInFromRight 0.8s ease-out forwards; }
+    .animate-fade-scale { animation: fadeInScale 0.6s ease-out forwards; }
+    .animate-text-glow { animation: textGlow 3s ease-in-out infinite; }
+    
+    /* Glass Effects */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .glass-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Enhanced Button Styles */
+    .btn-bloom {
+      @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105 focus:scale-95;
+    }
+    
+    .btn-bloom::before {
+      content: '';
+      @apply absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 transform -skew-x-12 -translate-x-full transition-transform duration-700;
+    }
+    
+    .btn-bloom:hover::before {
+      @apply opacity-25 translate-x-full;
+    }
+    
+    /* Logo Enhancements */
+    .logo-container {
+      @apply relative;
+    }
+    
+    .logo-bg {
+      @apply absolute inset-0 bg-purple-600 rounded-2xl;
+    }
+    
+    .logo-glow {
+      @apply absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 rounded-2xl blur-lg opacity-40;
+    }
+    
+    /* Mobile Menu Enhancements */
+    .mobile-menu-slide {
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .mobile-menu-slide.open {
+      transform: translateX(0);
+    }
+    
+    .mobile-menu-item {
+      @apply transform translate-x-8 opacity-0 transition-all duration-300;
+    }
+    
+    .mobile-menu-slide.open .mobile-menu-item {
+      @apply translate-x-0 opacity-100;
+    }
+    
+    /* Staggered delays for mobile menu items */
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(1) { transition-delay: 0.1s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(2) { transition-delay: 0.15s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(3) { transition-delay: 0.2s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(4) { transition-delay: 0.25s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(5) { transition-delay: 0.3s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(6) { transition-delay: 0.35s; }
+    .mobile-menu-slide.open .mobile-menu-item:nth-child(7) { transition-delay: 0.4s; }
+    
+    /* Floating Particles */
+    .particle {
+      @apply absolute w-2 h-2 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full opacity-70;
+      animation: particle1 15s linear infinite;
+    }
+    
+    .particle:nth-child(2n) {
+      @apply bg-gradient-to-br from-blue-400 to-cyan-500;
+      animation: particle2 20s linear infinite;
+      animation-delay: -5s;
+    }
+    
+    .particle:nth-child(3n) {
+      @apply bg-gradient-to-br from-emerald-400 to-teal-500;
+      animation-delay: -10s;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { 
+      @apply bg-gradient-to-b from-purple-500 to-fuchsia-600 rounded-full; 
+    }
+    ::-webkit-scrollbar-thumb:hover { 
+      @apply from-purple-600 to-fuchsia-700; 
+    }
+    
+    /* Focus States */
+    .focus-bloom:focus {
+      @apply outline-none ring-4 ring-purple-200 ring-opacity-50;
+    }
+    
+    /* NEW: Animated Gradient Background */
+    @keyframes animatedGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
-    header {
-      background: linear-gradient(to right, #d8b4fe, #f0abfc);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      position: relative;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: #4c1d95;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-    }
-
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #4c1d95;
-      font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-
-    nav a:hover {
-      background-color: #ede9fe;
-    }
-
-    .menu-icon {
-      display: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      color: #4c1d95;
-    }
-
-    .mobile-nav {
-      display: none;
-      flex-direction: column;
-      background: #f3e8ff;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      width: 100%;
-      z-index: 999;
-      padding: 1rem;
-    }
-
-    .mobile-nav a {
-      margin: 0.5rem 0;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1rem;
-    }
-
-    main {
-      flex: 1;
-      padding: 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    footer {
-      background-color: #f3e8ff;
-      text-align: center;
-      padding: 1rem;
-      color: #6b21a8;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 768px) {
-      nav.desktop-nav {
-        display: none;
-      }
-
-      .menu-icon {
-        display: block;
-      }
-
-      .mobile-nav.show {
-        display: flex;
-      }
-
-      main {
-        padding: 1rem;
-      }
-
-      footer {
-        font-size: 0.8rem;
-        padding: 0.8rem;
-      }
+    .animated-bg {
+        background: linear-gradient(-45deg, #f5f3ff, #f0f9ff, #f0fdf4, #faf5ff);
+        background-size: 400% 400%;
+        animation: animatedGradient 25s ease infinite;
     }
   </style>
-</head>
-<body>
-  <header>
-    <h1>Bloom</h1>
-
-    <!-- Menu Icon for small screens -->
-    <span class="menu-icon" onclick="toggleMenu()">☰</span>
-
-    <!-- Desktop Nav -->
-    <nav class="desktop-nav">
-      <a href="/">Home</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}">Dashboard</a>
-        <a href="{% url 'chatbot_home' %}">Chatbot</a>
-        <a href="{% url 'mood_tracker' %}">Mood Tracker</a>
-        <a href="{% url 'therapist_list' %}">Therapists</a>
-        <a href="{% url 'journal_list' %}">Journal</a>
-        <a href="{% url 'insights_home' %}">Insights</a>
-        <a href="{% url 'logout' %}" id="logout-link">Logout</a>
-      {% else %}
-        <a href="{% url 'signup' %}">Sign Up</a>
-        <a href="{% url 'login' %}">Login</a>
-      {% endif %}
-    </nav>
-
-    <!-- Mobile Nav -->
-    <nav class="mobile-nav" id="mobileMenu">
-      <a href="/">Home</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}">Dashboard</a>
-        <a href="{% url 'chatbot_home' %}">Chatbot</a>
-        <a href="{% url 'mood_tracker' %}">Mood Tracker</a>
-        <a href="{% url 'therapist_list' %}">Therapists</a>
-        <a href="{% url 'journal_list' %}">Journal</a>
-        <a href="{% url 'insights_home' %}">Insights</a>
-        <a href="{% url 'logout' %}" id="logout-link-mobile">Logout</a>
-      {% else %}
-        <a href="{% url 'signup' %}">Sign Up</a>
-        <a href="{% url 'login' %}">Login</a>
-      {% endif %}
-    </nav>
-  </header>
-
-  <main>
-    {% block content %}
-    {% endblock %}
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Bloom by Pinkesh!</p>
-  </footer>
-
+  
   <script>
-    function toggleMenu() {
-      const menu = document.getElementById("mobileMenu");
-      menu.classList.toggle("show");
-    }
-
-    // Optional logout confirm for mobile
-    document.addEventListener('DOMContentLoaded', function () {
-      const logoutDesktop = document.getElementById('logout-link');
-      const logoutMobile = document.getElementById('logout-link-mobile');
-
-      function confirmLogout(link) {
-        if (confirm("Are you sure you want to logout?")) {
-          window.location.href = link.href;
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'dm': ['DM Sans', 'sans-serif'],
+            'fredoka': ['Fredoka', 'sans-serif'],
+            'pacifico': ['Pacifico', 'cursive'],
+          },
+          colors: {
+            'bloom': {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            }
+          },
+          animation: {
+            'gentle-float': 'gentleFloat 6s ease-in-out infinite',
+            'rotate-glow': 'rotateGlow 20s linear infinite',
+            'sparkle': 'sparkle 2s ease-in-out infinite',
+            'morph': 'morphBackground 8s ease-in-out infinite',
+            'slide-up': 'slideInFromBottom 0.8s ease-out forwards',
+            'slide-left': 'slideInFromLeft 0.8s ease-out forwards',
+            'slide-right': 'slideInFromRight 0.8s ease-out forwards',
+            'fade-scale': 'fadeInScale 0.6s ease-out forwards',
+            'text-glow': 'textGlow 3s ease-in-out infinite',
+          }
         }
       }
+    }
+  </script>
+</head>
 
-      if (logoutDesktop) {
-        logoutDesktop.addEventListener('click', function (e) {
-          e.preventDefault();
-          confirmLogout(logoutDesktop);
+<body class="min-h-screen font-inter antialiased overflow-x-hidden animated-bg">
+  
+  <!-- Floating Particles Background (Kept for subtle effect) -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-50">
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: -2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: -4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: -6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: -8s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: -10s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: -12s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: -14s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: -16s;"></div>
+  </div>
+
+  <!-- Enhanced Decorative Background Elements -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <!-- Primary Blob -->
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-300/30 to-pink-400/30 rounded-full filter blur-3xl animate-gentle-float"></div>
+    <!-- Secondary Blob -->
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-300/30 to-blue-400/30 rounded-full filter blur-3xl animate-gentle-float" style="animation-delay: 2s;"></div>
+    <!-- Tertiary Blob -->
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-emerald-300/20 to-teal-400/20 rounded-full filter blur-3xl animate-morph"></div>
+    <!-- Accent Shapes -->
+    <div class="absolute top-20 right-1/4 w-32 h-32 bg-gradient-to-br from-yellow-300/20 to-orange-400/20 rounded-full filter blur-2xl animate-gentle-float" style="animation-delay: 3s;"></div>
+    <div class="absolute bottom-20 left-1/4 w-24 h-24 bg-gradient-to-br from-rose-300/20 to-pink-400/20 rounded-full filter blur-2xl animate-gentle-float" style="animation-delay: 1s;"></div>
+  </div>
+
+  <!-- Enhanced Sticky Header -->
+  <header class="sticky top-0 z-50 glass-header shadow-xl border-b border-white/20 transition-all duration-300" id="main-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Enhanced Logo with New Design & Link -->
+        <a href="/" class="flex items-center space-x-4 animate-slide-left group">
+          <div class="logo-container">
+            <!-- Logo Glow Effect -->
+            <div class="logo-glow group-hover:opacity-60 transition-opacity duration-300"></div>
+            <!-- Main Logo Background -->
+            <div class="logo-bg group-hover:scale-110 transition-transform duration-300"></div>
+            <!-- Logo Content -->
+            <div class="relative w-16 h-16 flex items-center justify-center">
+              <!-- Leaf Icon with Sparkle Effects -->
+              <div class="relative">
+                <i class="fas fa-spa text-white text-2xl transform group-hover:rotate-12 transition-transform duration-300"></i>
+                <!-- Sparkle Elements -->
+                <div class="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-sparkle opacity-80"></div>
+                <div class="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-sparkle opacity-60" style="animation-delay: 0.5s;"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h1 class="text-5xl font-pacifico bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent animate-text-glow">
+              Bloom
+            </h1>
+            <p class="text-xs text-gray-500 font-dm mt-1 tracking-wider">Mental Wellness Journey</p>
+          </div>
+        </a>
+
+        <!-- Enhanced Desktop Navigation -->
+        <nav class="hidden lg:flex items-center space-x-1 animate-slide-right">
+          <a href="/" class="group px-6 py-3 text-gray-700 hover:text-purple-600 font-dm font-medium rounded-2xl hover:bg-purple-50 transition-all duration-300 transform hover:scale-105">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-home text-sm group-hover:scale-110 transition-transform duration-300"></i>
+              <span>Home</span>
+            </div>
+          </a>
+          
+          {% if user.is_authenticated %}
+            {% if user.therapist and user.therapist.is_approved %}
+            <a href="{% url 'therapists:therapist_dashboard' %}" class="group px-6 py-3 text-gray-700 hover:text-purple-600 font-dm font-medium rounded-2xl hover:bg-purple-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-chart-line text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>Dashboard</span>
+              </div>
+            </a>
+            {% else %}
+            <a href="{% url 'profile' %}" class="group px-6 py-3 text-gray-700 hover:text-purple-600 font-dm font-medium rounded-2xl hover:bg-purple-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-user text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>Profile</span>
+              </div>
+            </a>
+            <a href="{% url 'chatbot:chatbot_home' %}" class="group px-6 py-3 text-gray-700 hover:text-blue-600 font-dm font-medium rounded-2xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-robot text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>AI Assistant</span>
+              </div>
+            </a>
+            <a href="{% url 'therapists:therapist_list' %}" class="group px-6 py-3 text-gray-700 hover:text-indigo-600 font-dm font-medium rounded-2xl hover:bg-indigo-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-user-md text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>Therapists</span>
+              </div>
+            </a>
+            <a href="{% url 'journal_list' %}" class="group px-6 py-3 text-gray-700 hover:text-amber-600 font-dm font-medium rounded-2xl hover:bg-amber-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-book-open text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>Journal</span>
+              </div>
+            </a>
+            <a href="{% url 'insights_home' %}" class="group px-6 py-3 text-gray-700 hover:text-pink-600 font-dm font-medium rounded-2xl hover:bg-pink-50 transition-all duration-300 transform hover:scale-105">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-brain text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                <span>Insights</span>
+              </div>
+            </a>
+            <button id="logout-btn" class="btn-bloom ml-4 px-8 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl font-fredoka focus-bloom">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-sign-out-alt text-sm"></i>
+                <span>Logout</span>
+              </div>
+            </button>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'signup' %}" class="btn-bloom ml-4 px-8 py-3 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl font-fredoka">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-user-plus text-sm"></i>
+                <span>Sign Up</span>
+              </div>
+            </a>
+            <a href="{% url 'login' %}" class="btn-bloom ml-2 px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl font-fredoka">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-sign-in-alt text-sm"></i>
+                <span>Login</span>
+              </div>
+            </a>
+          {% endif %}
+        </nav>
+
+        <!-- Enhanced Mobile Menu Button -->
+        <div class="lg:hidden animate-slide-right">
+          <button id="mobile-menu-btn" class="p-4 rounded-2xl text-gray-600 hover:text-purple-600 hover:bg-purple-50 transition-all duration-300 focus-bloom group">
+            <div class="relative">
+              <div id="menu-icon" class="w-6 h-6 flex flex-col justify-center space-y-1.5 group-hover:scale-110 transition-transform duration-300">
+                <span class="block w-6 h-0.5 bg-current transition-all duration-300 transform origin-center group-hover:bg-purple-600"></span>
+                <span class="block w-6 h-0.5 bg-current transition-all duration-300 transform origin-center group-hover:bg-purple-600"></span>
+                <span class="block w-6 h-0.5 bg-current transition-all duration-300 transform origin-center group-hover:bg-purple-600"></span>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 opacity-0 invisible transition-all duration-300"></div>
+
+  <!-- Enhanced Mobile Navigation -->
+  <div id="mobile-menu" class="mobile-menu-slide fixed top-0 right-0 h-full w-80 max-w-[90vw] glass-card shadow-2xl z-50">
+    <div class="flex flex-col h-full">
+      
+      <!-- Mobile Header -->
+      <div class="flex items-center justify-between p-6 border-b border-white/20">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-spa text-white text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-pacifico bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">
+              Menu
+            </h2>
+            <p class="text-xs text-gray-500 font-dm">Navigate Bloom</p>
+          </div>
+        </div>
+        <button id="close-menu-btn" class="p-3 rounded-2xl text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all duration-300 focus-bloom">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <!-- Mobile Nav Items -->
+      <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+        <a href="/" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-2xl transition-all duration-300 group">
+          <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+            <i class="fas fa-home text-purple-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+          </div>
+          <div>
+            <span class="text-lg font-medium">Home</span>
+            <p class="text-xs text-gray-500">Welcome page</p>
+          </div>
+        </a>
+        
+        {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-purple-600 hover:bg-purple-50 rounded-2xl transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 group-hover:from-purple-200 group-hover:to-purple-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+              <i class="fas fa-user text-purple-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-medium">Profile</span>
+              <p class="text-xs text-gray-500">Your account</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'chatbot:chatbot_home' %}" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-200 group-hover:to-blue-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+              <i class="fas fa-robot text-blue-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-medium">AI Assistant</span>
+              <p class="text-xs text-gray-500">Chat support</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'therapists:therapist_list' %}" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-indigo-200 group-hover:from-indigo-200 group-hover:to-indigo-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+              <i class="fas fa-user-md text-indigo-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-medium">Therapists</span>
+              <p class="text-xs text-gray-500">Professional help</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'journal_list' %}" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-2xl transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-200 group-hover:from-amber-200 group-hover:to-amber-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+              <i class="fas fa-book-open text-amber-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-medium">Journal</span>
+              <p class="text-xs text-gray-500">Write thoughts</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'insights_home' %}" class="mobile-menu-item flex items-center p-4 text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-2xl transition-all duration-300 group">
+            <div class="w-12 h-12 bg-gradient-to-br from-pink-100 to-pink-200 group-hover:from-pink-200 group-hover:to-pink-300 rounded-2xl flex items-center justify-center mr-4 transition-all duration-300 shadow-sm">
+              <i class="fas fa-brain text-pink-600 text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-medium">Insights</span>
+              <p class="text-xs text-gray-500">Your analytics</p>
+            </div>
+          </a>
+        
+        {% else %}
+          <a href="{% url 'signup' %}" class="mobile-menu-item flex items-center p-4 text-white bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 rounded-2xl transition-all duration-300 group shadow-lg">
+            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mr-4">
+              <i class="fas fa-user-plus text-white text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-semibold">Sign Up</span>
+              <p class="text-xs text-white/80">Create account</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'login' %}" class="mobile-menu-item flex items-center p-4 text-white bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-2xl transition-all duration-300 group shadow-lg">
+            <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mr-4">
+              <i class="fas fa-sign-in-alt text-white text-lg group-hover:scale-110 transition-transform duration-300"></i>
+            </div>
+            <div>
+              <span class="text-lg font-semibold">Login</span>
+              <p class="text-xs text-white/80">Access account</p>
+            </div>
+          </a>
+        {% endif %}
+      </nav>
+      
+      {% if user.is_authenticated %}
+      <!-- Mobile Logout Button -->
+      <div class="p-6 border-t border-white/20">
+        <button id="logout-btn-mobile" class="mobile-menu-item w-full flex items-center justify-center p-4 text-white bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 rounded-2xl transition-all duration-300 shadow-lg font-fredoka font-semibold focus-bloom">
+          <i class="fas fa-sign-out-alt mr-3 text-lg"></i>
+          <span class="text-lg">Logout</span>
+        </button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="relative z-10 flex-1 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="animate-slide-up">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </main>
+
+  <!-- Enhanced Footer -->
+  <footer class="relative z-10 glass-card border-t border-white/20 mt-20">
+    <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        
+        <!-- Footer Logo Section -->
+        <div class="flex items-center justify-center space-x-4 mb-8 animate-fade-scale">
+          <div class="logo-container group">
+            <div class="logo-glow"></div>
+            <div class="logo-bg"></div>
+            <div class="relative w-16 h-16 flex items-center justify-center">
+              <div class="relative">
+                <i class="fas fa-spa text-white text-2xl"></i>
+                <div class="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-sparkle opacity-80"></div>
+                <div class="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-sparkle opacity-60" style="animation-delay: 0.5s;"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="text-5xl font-pacifico bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent">
+              Bloom
+            </span>
+            <p class="text-sm text-gray-600 font-dm tracking-wide">Mental Wellness Journey</p>
+          </div>
+        </div>
+        
+        <!-- Footer Description -->
+        <div class="animate-slide-up" style="animation-delay: 0.2s;">
+          <p class="text-gray-600 font-medium font-dm max-w-2xl mx-auto mb-10 leading-relaxed text-lg">
+            Nurturing mental wellness through innovative tools, compassionate support, and a thriving community. 
+            Your journey to a healthier mind starts here.
+          </p>
+        </div>
+        
+        <!-- Enhanced Social Links -->
+        <div class="flex justify-center space-x-6 mb-12 animate-slide-up" style="animation-delay: 0.4s;">
+          <a href="#" class="group w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl focus-bloom">
+            <i class="fab fa-twitter text-xl group-hover:scale-110 transition-transform duration-300"></i>
+          </a>
+          <a href="#" class="group w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl focus-bloom">
+            <i class="fab fa-instagram text-xl group-hover:scale-110 transition-transform duration-300"></i>
+          </a>
+          <a href="#" class="group w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl focus-bloom">
+            <i class="fab fa-linkedin text-xl group-hover:scale-110 transition-transform duration-300"></i>
+          </a>
+          <a href="#" class="group w-14 h-14 bg-gradient-to-br from-gray-700 to-gray-900 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl focus-bloom">
+            <i class="fab fa-github text-xl group-hover:scale-110 transition-transform duration-300"></i>
+          </a>
+        </div>
+        
+        <!-- Therapist Signup Link -->
+        <div class="mb-8 animate-slide-up" style="animation-delay: 0.6s;">
+          <a href="{% url 'therapists:therapist_signup' %}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-fredoka focus-bloom">
+            <i class="fas fa-stethoscope mr-3 text-lg"></i>
+            <span>Become a Therapist</span>
+            <i class="fas fa-arrow-right ml-3 text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+          </a>
+        </div>
+        
+        <!-- Copyright Section -->
+        <div class="border-t border-white/30 pt-8 animate-slide-up" style="animation-delay: 0.8s;">
+          <p class="text-gray-600 font-medium font-dm text-lg mb-3">
+            &copy; 2025 Bloom by 
+            <span class="bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent font-bold">
+              Pinkesh
+            </span>
+            • All rights reserved
+          </p>
+          <p class="text-gray-500 font-dm flex items-center justify-center text-base">
+            Crafted with <i class="fas fa-heart text-red-500 mx-2 animate-pulse text-lg"></i> for mental wellness
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Enhanced JavaScript -->
+  <script>
+    // Enhanced Mobile Menu Controller
+    class BloomMobileMenu {
+      constructor() {
+        this.menuBtn = document.getElementById('mobile-menu-btn');
+        this.menu = document.getElementById('mobile-menu');
+        this.overlay = document.getElementById('mobile-menu-overlay');
+        this.closeBtn = document.getElementById('close-menu-btn');
+        this.menuIcon = document.getElementById('menu-icon');
+        this.isOpen = false;
+        
+        this.init();
+      }
+      
+      init() {
+        this.menuBtn?.addEventListener('click', () => this.toggle());
+        this.closeBtn?.addEventListener('click', () => this.close());
+        this.overlay?.addEventListener('click', () => this.close());
+        
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.isOpen) this.close();
+        });
+        
+        // Close on navigation (except logout)
+        this.menu?.querySelectorAll('.mobile-menu-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            if (!item.id?.includes('logout') && !e.target.closest('button')) {
+              setTimeout(() => this.close(), 300);
+            }
+          });
         });
       }
-
-      if (logoutMobile) {
-        logoutMobile.addEventListener('click', function (e) {
-          e.preventDefault();
-          confirmLogout(logoutMobile);
+      
+      toggle() {
+        this.isOpen ? this.close() : this.open();
+      }
+      
+      open() {
+        this.isOpen = true;
+        this.menu?.classList.add('open');
+        this.overlay?.classList.remove('opacity-0', 'invisible');
+        this.overlay?.classList.add('opacity-100', 'visible');
+        document.body.style.overflow = 'hidden';
+        
+        // Animate hamburger to X
+        if (this.menuIcon) {
+          const spans = this.menuIcon.querySelectorAll('span');
+          spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
+          spans[1].style.opacity = '0';
+          spans[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
+        }
+      }
+      
+      close() {
+        this.isOpen = false;
+        this.menu?.classList.remove('open');
+        this.overlay?.classList.remove('opacity-100', 'visible');
+        this.overlay?.classList.add('opacity-0', 'invisible');
+        document.body.style.overflow = '';
+        
+        // Animate X back to hamburger
+        if (this.menuIcon) {
+          const spans = this.menuIcon.querySelectorAll('span');
+          spans.forEach(span => {
+            span.style.transform = '';
+            span.style.opacity = '1';
+          });
+        }
+      }
+    }
+    
+    // Enhanced Header Scroll Effects
+    class BloomHeader {
+      constructor() {
+        this.header = document.getElementById('main-header');
+        this.lastScrollY = window.scrollY;
+        this.init();
+      }
+      
+      init() {
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              const currentScrollY = window.scrollY;
+              
+              // Add blur and shadow effect
+              if (currentScrollY > 50) {
+                this.header?.classList.add('backdrop-blur-2xl', 'shadow-2xl');
+              } else {
+                this.header?.classList.remove('backdrop-blur-2xl', 'shadow-2xl');
+              }
+              
+              // Hide/show header on scroll
+              if (currentScrollY > this.lastScrollY && currentScrollY > 200) {
+                this.header.style.transform = 'translateY(-100%)';
+              } else {
+                this.header.style.transform = 'translateY(0)';
+              }
+              
+              this.lastScrollY = currentScrollY;
+              ticking = false;
+            });
+            ticking = true;
+          }
         });
       }
+    }
+    
+    // Enhanced Logout Modal System
+    class BloomLogout {
+      constructor() {
+        this.init();
+      }
+      
+      init() {
+        const logoutBtns = document.querySelectorAll('#logout-btn, #logout-btn-mobile');
+        logoutBtns.forEach(btn => {
+          btn?.addEventListener('click', (e) => this.showModal(e));
+        });
+      }
+      
+      showModal(e) {
+        e.preventDefault();
+        
+        const modal = this.createModal();
+        document.body.appendChild(modal);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+          modal.classList.remove('opacity-0');
+          modal.classList.add('opacity-100');
+          const content = modal.querySelector('.modal-content');
+          content?.classList.remove('scale-90', 'opacity-0');
+          content?.classList.add('scale-100', 'opacity-100');
+        });
+      }
+      
+      createModal() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 transition-all duration-300';
+        
+        modal.innerHTML = `
+          <div class="modal-content glass-card rounded-3xl shadow-2xl max-w-md w-full p-8 scale-90 opacity-0 transition-all duration-300">
+            <div class="text-center">
+              <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-gentle-float">
+                <i class="fas fa-sign-out-alt text-white text-2xl"></i>
+              </div>
+              <h3 class="text-3xl font-pacifico text-gray-800 mb-4">Confirm Logout</h3>
+              <p class="text-gray-600 mb-8 font-dm leading-relaxed">Are you sure you want to logout? You'll need to sign in again to access your wellness journey.</p>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <button class="cancel-btn btn-bloom flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-fredoka font-semibold focus-bloom">
+                  <i class="fas fa-times mr-2"></i>Cancel
+                </button>
+                <button class="confirm-btn btn-bloom flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white rounded-2xl shadow-lg font-fredoka font-semibold focus-bloom">
+                  <i class="fas fa-check mr-2"></i>Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Event handlers
+        modal.querySelector('.cancel-btn')?.addEventListener('click', () => {
+          this.closeModal(modal);
+        });
+        
+        modal.querySelector('.confirm-btn')?.addEventListener('click', (e) => {
+          const btn = e.target.closest('button');
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Logging out...';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+            window.location.href = "{% url 'logout' %}";
+          }, 1200);
+        });
+        
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) this.closeModal(modal);
+        });
+        
+        return modal;
+      }
+      
+      closeModal(modal) {
+        const content = modal.querySelector('.modal-content');
+        modal.classList.remove('opacity-100');
+        modal.classList.add('opacity-0');
+        content?.classList.remove('scale-100', 'opacity-100');
+        content?.classList.add('scale-90', 'opacity-0');
+        
+        setTimeout(() => {
+          modal.remove();
+        }, 300);
+      }
+    }
+    
+    // Animation Observer for scroll-triggered animations
+    class BloomAnimations {
+      constructor() {
+        this.init();
+      }
+      
+      init() {
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-slide-up');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        });
+        
+        // Observe elements that should animate on scroll
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+          observer.observe(el);
+        });
+        
+        // Add loading states to navigation
+        this.addNavigationLoading();
+      }
+      
+      addNavigationLoading() {
+        document.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function(e) {
+            if (!this.id?.includes('logout') && 
+                !this.href?.includes('logout') && 
+                !this.href?.includes('#') &&
+                this.href !== window.location.href &&
+                !this.target) { // Do not apply for links that open in a new tab
+              
+              // Add loading state
+              const originalContent = this.innerHTML;
+              this.style.position = 'relative';
+              this.style.color = 'transparent';
+              
+              const spinner = document.createElement('div');
+              spinner.className = 'absolute inset-0 flex items-center justify-center';
+              spinner.innerHTML = '<i class="fas fa-spinner fa-spin text-purple-600"></i>';
+              this.appendChild(spinner);
+              
+              // Reset after timeout in case navigation fails
+              setTimeout(() => {
+                this.style.color = '';
+                this.innerHTML = originalContent;
+              }, 5000);
+            }
+          });
+        });
+      }
+    }
+    
+    // Initialize all systems when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      new BloomMobileMenu();
+      new BloomHeader();
+      new BloomLogout();
+      new BloomAnimations();
+      
+      console.log('🌸 Bloom Enhanced Template Loaded Successfully!');
+    });
+    
+    // Performance optimization
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
     });
   </script>
 </body>
 </html>
+
+
+

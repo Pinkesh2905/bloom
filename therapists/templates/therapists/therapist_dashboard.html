@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% if therapist.is_approved %}
+    {# --- FULL DASHBOARD FOR APPROVED THERAPISTS --- #}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- Welcome Header -->
+      <div class="text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-extrabold font-fredoka mb-4">
+          <span class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Welcome Back, Dr. {{ request.user.get_full_name }}
+          </span>
+        </h1>
+        <p class="text-lg text-gray-600 font-dm max-w-2xl mx-auto">
+          Here's your overview for today. Let's make a positive impact.
+        </p>
+      </div>
+
+      <!-- Profile Completion Alert -->
+      {% if profile_completion < 80 %}
+        <div class="glass-strong rounded-2xl p-6 mb-8 border-l-4 border-yellow-400 bg-yellow-50/80 animate-fadeInUp">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center">
+              <i class="fas fa-exclamation-triangle text-yellow-500 text-3xl mr-5"></i>
+              <div>
+                <h3 class="font-bold text-lg text-yellow-800 font-fredoka">Complete Your Profile</h3>
+                <p class="text-yellow-700 text-sm font-dm">Your profile is {{ profile_completion|floatformat:0 }}% complete. A polished profile attracts more patients.</p>
+              </div>
+            </div>
+            <a href="{% url 'therapists:update_therapist_profile' %}" 
+               class="btn-modern px-5 py-2.5 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition-all font-semibold text-sm">
+              Finish Setup
+            </a>
+          </div>
+          <div class="mt-4 w-full bg-yellow-200 rounded-full h-2.5">
+            <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2.5 rounded-full" style="width: {{ profile_completion }}%"></div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card rounded-2xl p-6 shadow-lg">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm opacity-90">Total Appointments</p>
+                  <p class="text-3xl font-bold">{{ analytics.total_appointments|default:0 }}</p>
+                  <p class="text-xs opacity-75">Last 30 days</p>
+                </div>
+                <i class="fas fa-calendar-check text-4xl opacity-50"></i>
+              </div>
+            </div>
+            <div class="stat-card green rounded-2xl p-6 shadow-lg">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm opacity-90">Completed Sessions</p>
+                  <p class="text-3xl font-bold">{{ analytics.completed_appointments|default:0 }}</p>
+                  <p class="text-xs opacity-75">{% if analytics.total_appointments > 0 %}Success rate: {% widthratio analytics.completed_appointments analytics.total_appointments 100 %}%{% else %}No sessions yet{% endif %}</p>
+                </div>
+                <i class="fas fa-check-circle text-4xl opacity-50"></i>
+              </div>
+            </div>
+            <div class="stat-card blue rounded-2xl p-6 shadow-lg">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm opacity-90">Pending Appointments</p>
+                  <p class="text-3xl font-bold">{{ analytics.pending_appointments|default:0 }}</p>
+                  <p class="text-xs opacity-75">Awaiting confirmation</p>
+                </div>
+                <i class="fas fa-clock text-4xl opacity-50"></i>
+              </div>
+            </div>
+            <div class="stat-card purple rounded-2xl p-6 shadow-lg">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm opacity-90">Patient Rating</p>
+                  <p class="text-3xl font-bold">{{ therapist.rating|floatformat:1 }}<span class="text-lg">/5</span></p>
+                  <p class="text-xs opacity-75">{{ therapist.total_reviews }} review{{ therapist.total_reviews|pluralize }}</p>
+                </div>
+                <i class="fas fa-star text-4xl opacity-50"></i>
+              </div>
+            </div>
+      </div>
+      
+      <!-- Main Dashboard Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- Today's Schedule -->
+            <div class="glass-strong rounded-3xl shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold font-fredoka text-gray-800 mb-6">Today's Schedule</h2>
+                {% if today_appointments %}
+                    <div class="space-y-4">
+                        {% for appointment in today_appointments %}
+                          <div class="flex items-center justify-between p-4 border border-gray-200/80 rounded-2xl hover:bg-gray-50/50 transition-all">
+                            <div class="flex items-center space-x-4">
+                              <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                {{ appointment.patient.first_name|first }}{{ appointment.patient.last_name|first }}
+                              </div>
+                              <div>
+                                <div class="font-semibold text-gray-800">{{ appointment.patient.get_full_name }}</div>
+                                <div class="text-sm text-gray-600">{{ appointment.get_session_type_display }}</div>
+                              </div>
+                            </div>
+                            <div class="text-right">
+                              <div class="font-semibold text-gray-800">{{ appointment.time|time:"g:i A" }}</div>
+                              <div class="text-sm text-gray-600">{{ appointment.duration }} min</div>
+                            </div>
+                          </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-10 px-6 bg-gray-50/70 rounded-2xl">
+                        <i class="fas fa-coffee text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="font-bold font-fredoka text-gray-700">No appointments scheduled for today.</h3>
+                        <p class="text-sm text-gray-500 mt-1">Enjoy your day or prepare for upcoming sessions.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="glass-strong rounded-3xl shadow-xl p-6 md:p-8">
+                <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+                    <h2 class="text-2xl font-bold font-fredoka text-gray-800">Upcoming Appointments</h2>
+                    <a href="{% url 'therapists:therapist_appointments' %}" class="text-purple-600 hover:text-purple-800 font-semibold font-dm text-sm">View All <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+                {% if upcoming_appointments %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                          <thead class="bg-gray-50/50">
+                            <tr>
+                              <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Patient</th>
+                              <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date & Time</th>
+                              <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                              <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-gray-200/50">
+                            {% for appointment in upcoming_appointments %}
+                              <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-4 py-4 whitespace-nowrap">{{ appointment.patient.get_full_name }}</td>
+                                <td class="px-4 py-4 whitespace-nowrap">
+                                  <div>{{ appointment.date|date:"M d, Y" }}</div>
+                                  <div class="text-sm text-gray-500">{{ appointment.time|time:"g:i A" }}</div>
+                                </td>
+                                <td class="px-4 py-4 whitespace-nowrap"><span class="pill-status type-{{ appointment.session_type|lower }}">{{ appointment.get_session_type_display }}</span></td>
+                                <td class="px-4 py-4 whitespace-nowrap"><span class="pill-status status-{{ appointment.status|lower }}">{{ appointment.get_status_display }}</span></td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-10 px-6 bg-gray-50/70 rounded-2xl">
+                        <i class="fas fa-calendar-alt text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="font-bold font-fredoka text-gray-700">No upcoming appointments.</h3>
+                        <p class="text-sm text-gray-500 mt-1">Your schedule is clear for now.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="space-y-8">
+            <div class="glass-strong rounded-3xl shadow-xl p-6">
+                <h3 class="text-xl font-bold font-fredoka text-gray-800 mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                  <a href="{% url 'therapists:update_therapist_profile' %}" class="quick-action-link bg-purple-50 hover:bg-purple-100 text-purple-700"><i class="fas fa-user-edit w-6"></i> Update Profile</a>
+                  <a href="{% url 'therapists:manage_schedule' %}" class="quick-action-link bg-blue-50 hover:bg-blue-100 text-blue-700"><i class="fas fa-calendar-alt w-6"></i> Manage Schedule</a>
+                  <a href="{% url 'therapists:therapist_appointments' %}" class="quick-action-link bg-green-50 hover:bg-green-100 text-green-700"><i class="fas fa-list-ul w-6"></i> All Appointments</a>
+                </div>
+            </div>
+
+            {% if pending_reviews > 0 %}
+                <div class="glass-strong rounded-3xl shadow-xl p-6 bg-gradient-to-br from-orange-400 to-amber-500 text-white">
+                    <div class="text-center">
+                        <i class="fas fa-star-half-alt text-4xl mb-3 opacity-80"></i>
+                        <h3 class="text-xl font-bold font-fredoka mb-2">{{ pending_reviews }} Pending Review{{ pending_reviews|pluralize }}</h3>
+                        <p class="text-sm opacity-90 mb-4">Patients are waiting for your response.</p>
+                        <a href="#" class="btn-modern px-4 py-2 bg-white text-orange-600 font-semibold rounded-xl hover:bg-gray-100 transition-all text-sm">Respond Now</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+
+{% else %}
+    {# --- PENDING APPROVAL PAGE --- #}
+    <div class="flex items-center justify-center min-h-[60vh]">
+        <div class="text-center max-w-2xl mx-auto p-8">
+            <div class="inline-block bg-gradient-to-br from-blue-100 to-purple-200 p-5 rounded-full mb-6 animate-pulse-glow">
+                <i class="fas fa-hourglass-half text-5xl text-purple-600"></i>
+            </div>
+            <h1 class="text-4xl font-fredoka font-bold text-gray-800 mb-4">
+                Your Application is Under Review
+            </h1>
+            <p class="text-gray-600 font-dm text-lg mb-8 leading-relaxed">
+                Thank you for submitting your application to join Bloom. Our team is currently reviewing your credentials to ensure the safety and quality of our platform. This process usually takes 2-3 business days.
+            </p>
+            <p class="text-gray-600 font-dm text-lg mb-8">
+                You will receive an email notification as soon as your profile is approved. We appreciate your patience.
+            </p>
+            <div class="mt-8">
+                 <a href="{% url 'logout' %}" class="btn-modern px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-2xl hover:from-red-600 hover:to-red-700 shadow-lg font-dm focus-ring">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<style>
+  .stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  .stat-card.green { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+  .stat-card.blue { background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); }
+  .stat-card.purple { background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%); }
+  
+  .quick-action-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s ease-in-out;
+  }
+  .quick-action-link:hover {
+      transform: translateX(4px);
+  }
+
+  .pill-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+  }
+  .pill-status.status-pending { background-color: #fef3c7; color: #92400e; }
+  .pill-status.status-confirmed { background-color: #dbeafe; color: #1e40af; }
+  .pill-status.type-video { background-color: #dbeafe; color: #1e40af; }
+  .pill-status.type-chat { background-color: #d1fae5; color: #065f46; }
+</style>
+
+{% endblock %}
+
