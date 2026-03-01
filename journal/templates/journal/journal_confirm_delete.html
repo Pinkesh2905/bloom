@@ -1,77 +1,39 @@
 {% extends 'base.html' %}
-{% block content %}
+{% load static %}
 
+{% block extra_css %}
 <style>
-  .delete-container {
-    max-width: 600px;
-    margin: 60px auto;
-    padding: 2.5rem;
-    background: #fff7f7;
-    border: 2px solid #fecaca;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.08);
-    text-align: center;
-    font-family: 'Segoe UI', sans-serif;
-  }
-
-  .delete-container h2 {
-    color: #b91c1c;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .delete-container p {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 2.2rem;
-  }
-
-  .delete-container form {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .delete-container button,
-  .delete-container a {
-    padding: 0.65rem 1.4rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-
-  .confirm-btn {
-    background-color: #ef4444;
-    color: white;
-  }
-
-  .confirm-btn:hover {
-    background-color: #dc2626;
-  }
-
-  .cancel-btn {
-    background-color: #e5e7eb;
-    color: #374151;
-  }
-
-  .cancel-btn:hover {
-    background-color: #d1d5db;
-  }
+    .delete-glass {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2.5rem;
+    }
 </style>
+{% endblock %}
 
-<div class="delete-container">
-  <h2>🗑️ Delete Entry</h2>
-  <p>Are you sure you want to delete "<strong>{{ journal.title }}</strong>"? This action cannot be undone.</p>
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full delete-glass p-12 text-center reveal">
+        <div class="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-rose-500/20">
+            <i class="fas fa-trash-alt text-3xl text-rose-500"></i>
+        </div>
+        
+        <span class="text-[10px] font-black tracking-[0.4em] text-rose-500 uppercase mb-4 block">Destructive Action</span>
+        <h2 class="text-3xl font-black text-white mb-4 tracking-tight">Erase Reflection?</h2>
+        <p class="text-indigo-200/40 text-sm font-medium mb-10 leading-relaxed">
+            You are about to permanently delete <span class="text-white font-bold">"{{ journal.title }}"</span>. This transmission will be lost to the void forever.
+        </p>
 
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="confirm-btn">✅ Yes, delete it</button>
-    <a href="{% url 'journal_list' %}" class="cancel-btn">❌ Cancel</a>
-  </form>
+        <form method="post" class="flex flex-col gap-4">
+            {% csrf_token %}
+            <button type="submit" class="w-full py-5 bg-rose-500 text-white font-black rounded-2xl hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/20">
+                Confirm Deletion
+            </button>
+            <a href="{% url 'journal_list' %}" class="w-full py-5 bg-white/5 text-white font-bold rounded-2xl hover:bg-white/10 transition-all">
+                Abort and Return
+            </a>
+        </form>
+    </div>
 </div>
-
 {% endblock %}

@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        min-height: calc(100vh - 80px);
+    }
+
+    .glass-sidebar {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        position: sticky;
+        top: 80px;
+        height: calc(100vh - 80px);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 2rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 16px;
+        color: rgba(255, 255, 255, 0.4);
+        font-family: 'Unbounded', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .nav-link.active {
+        background: rgba(217, 249, 157, 0.1);
+        color: #d9f99d;
+    }
+
+    .day-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .day-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(217, 249, 157, 0.2);
+    }
+
+    .time-badge {
+        background: rgba(217, 249, 157, 0.05);
+        border: 1px solid rgba(217, 249, 157, 0.2);
+        color: #d9f99d;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        color: white;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.8rem;
+    }
+
+    .form-label {
+        display: block;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.3);
+        margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-container { grid-template-columns: 1fr; }
+        .glass-sidebar { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="bg-bloom-dark pt-20">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+        <div class="dashboard-container">
+            
+            <!-- Sidebar -->
+            <aside class="glass-sidebar -ml-6 lg:-ml-10">
+                <div class="space-y-2">
+                    <a href="{% url 'therapists:therapist_dashboard' %}" class="nav-link">
+                        <i class="fas fa-th-large text-xs"></i> Command Center
+                    </a>
+                    <a href="{% url 'therapists:manage_schedule' %}" class="nav-link active">
+                        <i class="fas fa-calendar-alt text-xs"></i> Chronos Logic
+                    </a>
+                    <a href="{% url 'therapists:therapist_appointments' %}" class="nav-link">
+                        <i class="fas fa-users text-xs"></i> Patient Nodes
+                    </a>
+                    <a href="{% url 'therapists:update_therapist_profile' %}" class="nav-link">
+                        <i class="fas fa-user-cog text-xs"></i> Profile Apex
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <main class="py-10 space-y-10">
+                
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal">
+                    <div>
+                        <h1 class="text-4xl md:text-5xl font-unbounded font-black text-white uppercase mb-2">
+                            CHRONOS <span class="text-bloom-neon">LOGIC.</span>
+                        </h1>
+                        <p class="text-white/40 font-syne text-lg">Define session windows across the weekly temporal matrix.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-10">
+                    
+                    <!-- Weekly Schedule View -->
+                    <div class="xl:col-span-2 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal" style="transition-delay: 100ms;">
+                            {% for day_val, day_name in weekdays %}
+                            <div class="day-card group">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-sm font-unbounded font-black text-white uppercase tracking-widest">{{ day_name }}</h3>
+                                    <span class="text-[8px] font-black text-white/20 uppercase tracking-widest">Active Matrix</span>
+                                </div>
+                                <div class="space-y-3">
+                                    {% for schedule in schedules %}
+                                        {% if schedule.day_of_week == day_val %}
+                                        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 group-hover:border-white/10 transition-all">
+                                            <div class="flex items-center gap-3">
+                                                <span class="time-badge">{{ schedule.start_time|time:"H:i" }}</span>
+                                                <i class="fas fa-arrow-right text-[8px] text-white/20"></i>
+                                                <span class="time-badge">{{ schedule.end_time|time:"H:i" }}</span>
+                                            </div>
+                                            <form method="POST" action="#" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="delete_schedule" value="{{ schedule.id }}">
+                                                <button type="submit" class="text-white/20 hover:text-red-400 transition-colors">
+                                                    <i class="fas fa-times-circle text-xs"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    <button class="w-full py-3 border border-dashed border-white/10 rounded-xl text-[9px] font-black text-white/20 uppercase tracking-widest hover:border-bloom-neon/30 hover:text-bloom-neon transition-all">
+                                        + Allocate Slot
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Add Slot Module -->
+                    <div class="space-y-6 reveal" style="transition-delay: 200ms;">
+                        <div class="glass-card">
+                            <h3 class="text-sm font-unbounded font-black text-white uppercase tracking-widest mb-8 border-b border-white/5 pb-4">Slot Allocation</h3>
+                            <form method="POST" class="space-y-6">
+                                {% csrf_token %}
+                                
+                                <div class="space-y-2">
+                                    <label class="form-label">Temporal Unit (Day)</label>
+                                    {{ form.day_of_week }}
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="form-label">Start Pulse</label>
+                                        {{ form.start_time }}
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="form-label">End Pulse</label>
+                                        {{ form.end_time }}
+                                    </div>
+                                </div>
+
+                                <div class="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/10 mb-2">
+                                    <div class="flex items-start gap-4">
+                                        <i class="fas fa-info-circle text-blue-400 text-sm"></i>
+                                        <p class="text-[10px] text-blue-400/60 font-syne leading-relaxed">
+                                            System ensures non-overlapping temporal buffers between session allocations.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full h-14 bg-bloom-neon text-bloom-dark rounded-xl font-unbounded text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-xl">
+                                    Inject Slot
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- System Sync Status -->
+                        <div class="glass-card bg-gradient-to-br from-bloom-neon/5 to-transparent border-bloom-neon/10">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-2 h-2 rounded-full bg-bloom-neon animate-pulse"></div>
+                                <span class="text-[9px] font-unbounded font-black text-bloom-neon uppercase tracking-widest">Chronos Synced</span>
+                            </div>
+                            <p class="text-[11px] text-white/40 font-syne leading-relaxed">
+                                Availability logic is processed in real-time across all patient nodes. Changes are reflected in the global directory immediately.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Style form elements
+        const inputs = document.querySelectorAll('select, input');
+        inputs.forEach(input => {
+            input.classList.add('form-input');
+        });
+
+        const reveal = () => {
+            const elements = document.querySelectorAll('.reveal');
+            elements.forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('opacity-100', 'translate-y-0');
+                    el.classList.remove('opacity-0', 'translate-y-8');
+                }, i * 150);
+            });
+        };
+        const els = document.querySelectorAll('.reveal');
+        els.forEach(el => el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-1000', 'ease-out'));
+        setTimeout(reveal, 100);
+    });
+</script>
+{% endblock %}

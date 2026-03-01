@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 32px;
+        padding: 3rem;
+    }
+
+    .appointment-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 2rem;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .appointment-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #d9f99d;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .appointment-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(217, 249, 157, 0.3);
+        transform: translateX(10px);
+    }
+
+    .appointment-card:hover::before {
+        opacity: 1;
+    }
+
+    .status-tag {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'Unbounded', sans-serif;
+    }
+
+    .status-confirmed { background: rgba(217, 249, 157, 0.1); color: #d9f99d; }
+    .status-pending { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
+    .status-completed { background: rgba(96, 165, 250, 0.1); color: #60a5fa; }
+    .status-cancelled { background: rgba(248, 113, 113, 0.1); color: #f87171; }
+
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        items-center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: #d9f99d;
+        color: #0a0f1e;
+        border-color: #d9f99d;
+        transform: translateY(-2px);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 6rem 2rem;
+        border: 2px dashed rgba(255, 255, 255, 0.05);
+        border-radius: 40px;
+        background: rgba(255, 255, 255, 0.01);
+    }
+</style>
+
+<div class="max-w-7xl mx-auto px-10 py-20">
+    <div class="mb-16 reveal-up">
+        <h1 class="text-7xl font-unbounded font-black tracking-tighter mb-4">Neural <span class="text-bloom-neon italic">Sessions</span></h1>
+        <p class="text-2xl font-syne text-white/40">Synchronized records of your evolutionary journey.</p>
+    </div>
+
+    <!-- Upcoming Sessions -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-8 space-y-12">
+            <section class="reveal-up" style="transition-delay: 0.1s">
+                <div class="flex items-center justify-between mb-8 px-4">
+                    <h2 class="text-xl font-unbounded font-bold uppercase tracking-widest flex items-center gap-4">
+                        Upcoming Syncs
+                        <span class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px]">{{ upcoming_appointments.count }}</span>
+                    </h2>
+                </div>
+
+                {% if upcoming_appointments %}
+                    <div class="space-y-6">
+                        {% for appointment in upcoming_appointments %}
+                            <div class="appointment-card glass-panel !p-8">
+                                <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <div class="flex items-center gap-8">
+                                        <div class="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10">
+                                            <img src="{{ appointment.therapist.profile_picture.url }}" alt="" class="w-full h-full object-cover">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <h3 class="text-2xl font-unbounded font-black">Dr. {{ appointment.therapist.full_name }}</h3>
+                                                <span class="status-tag status-{{ appointment.status|lower }}">
+                                                    {{ appointment.get_status_display }}
+                                                </span>
+                                            </div>
+                                            <p class="text-[10px] font-unbounded font-black text-bloom-neon/60 uppercase tracking-widest mb-4">
+                                                {{ appointment.therapist.specialty_title|default:"Mental Health Expert" }}
+                                            </p>
+                                            <div class="flex flex-wrap gap-6 text-white/40 font-syne text-sm font-bold uppercase tracking-widest">
+                                                <span class="flex items-center gap-2"><i class="fas fa-calendar-alt text-bloom-neon"></i> {{ appointment.date|date:"F d, Y" }}</span>
+                                                <span class="flex items-center gap-2"><i class="fas fa-clock text-bloom-neon"></i> {{ appointment.time|time:"h:i A" }}</span>
+                                                <span class="flex items-center gap-2"><i class="fas fa-video text-bloom-neon"></i> {{ appointment.get_session_type_display }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4">
+                                        {% if appointment.status == 'CONFIRMED' %}
+                                            <a href="{{ appointment.session_link|default:'#' }}" class="px-8 py-4 bg-bloom-neon text-bloom-dark font-unbounded font-black text-[10px] uppercase tracking-widest rounded-xl hover:scale-105 transition-all shadow-lg shadow-bloom-neon/10">
+                                                Join Session
+                                            </a>
+                                        {% endif %}
+                                        <div class="flex gap-2">
+                                            <a href="{% url 'therapists:appointment_messages' appointment.id %}" class="action-btn" title="Secure Messages">
+                                                <i class="fas fa-comment-alt"></i>
+                                            </a>
+                                            <a href="{% url 'therapists:reschedule_appointment' appointment.id %}" class="action-btn" title="Shift Schedule">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </a>
+                                            <a href="{% url 'therapists:cancel_appointment' appointment.id %}" class="action-btn text-red-400 hover:bg-red-400 hover:text-white" title="De-Sync">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-satellite-dish text-5xl text-white/5 mb-6"></i>
+                        <h3 class="text-2xl font-unbounded font-black mb-4">No Active Signals</h3>
+                        <p class="text-white/40 font-syne mb-10">You have no upcoming sessions scheduled. Ready to sync with an expert?</p>
+                        <a href="{% url 'therapists:therapist_list' %}" class="px-10 py-5 border-2 border-white/10 rounded-full font-unbounded font-bold text-xs uppercase tracking-widest hover:bg-white hover:text-bloom-dark transition-all">
+                            Initialize Sync
+                        </a>
+                    </div>
+                {% endif %}
+            </section>
+
+            <!-- Past Sessions -->
+            <section class="reveal-up" style="transition-delay: 0.2s">
+                <h2 class="text-xl font-unbounded font-bold uppercase tracking-widest mb-8 px-4 flex items-center gap-4">
+                    Neural Logs
+                    <span class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px]">{{ past_appointments.count }}</span>
+                </h2>
+                
+                <div class="space-y-4">
+                    {% for appointment in past_appointments %}
+                        <div class="glass-panel !p-6 rounded-2xl border-white/5 opacity-60 hover:opacity-100 transition-all">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-12 h-12 rounded-xl overflow-hidden grayscale">
+                                        <img src="{{ appointment.therapist.profile_picture.url }}" alt="" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-unbounded font-bold text-sm">Dr. {{ appointment.therapist.full_name }}</h4>
+                                        <p class="text-[10px] font-syne font-black text-white/30 uppercase tracking-widest mt-1">
+                                            {{ appointment.date|date:"F d" }} • {{ appointment.get_status_display }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    {% if appointment.status == 'COMPLETED' %}
+                                        <a href="{% url 'therapists:leave_review' appointment.id %}" class="px-4 py-2 bg-white/5 rounded-lg text-[8px] font-unbounded font-black uppercase tracking-widest hover:bg-bloom-neon hover:text-bloom-dark transition-all">Review</a>
+                                    {% endif %}
+                                    <a href="{% url 'therapists:appointment_messages' appointment.id %}" class="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center text-xs hover:bg-white/10 transition-all"><i class="fas fa-history text-white/20"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-center text-white/20 font-syne italic py-10">Historical logs are currently empty.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar Summary -->
+        <div class="lg:col-span-4 space-y-8">
+            <div class="glass-panel reveal-up" style="transition-delay: 0.3s">
+                <h3 class="text-xl font-unbounded font-black mb-8 border-b border-white/5 pb-4">Session Stats</h3>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-unbounded font-bold text-white/40 uppercase">Total Synchronized</span>
+                        <span class="text-2xl font-unbounded font-black text-bloom-neon">{{ past_appointments.count|add:upcoming_appointments.count }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-unbounded font-bold text-white/40 uppercase">Completed Loops</span>
+                        <span class="text-2xl font-unbounded font-black text-bloom-accent">
+                            {{ past_appointments.filter.count }} <!-- Note: simplified count for template -->
+                        </span>
+                    </div>
+                    <div class="pt-6 border-t border-white/5">
+                        <div class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-[0.2em] mb-4">Neural Resonance</div>
+                        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-bloom-neon to-bloom-accent w-[75%]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel reveal-up" style="transition-delay: 0.4s">
+                <h3 class="text-xl font-unbounded font-black mb-8 border-b border-white/5 pb-4">Need Support?</h3>
+                <p class="text-sm font-syne text-white/50 leading-relaxed mb-8">Having trouble with a session or technical signals? Our team is always online.</p>
+                <a href="#" class="w-full block py-4 bg-white/5 text-center rounded-xl font-unbounded font-black text-[10px] uppercase tracking-widest border border-white/10 hover:border-bloom-neon hover:bg-white/10 transition-all">
+                    Pulse Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        gsap.from('.reveal-up', {
+            y: 60,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: 'power4.out'
+        });
+    });
+</script>
+{% endblock %}

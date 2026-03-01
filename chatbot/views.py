@@ -727,12 +727,31 @@ def send_message(request):
                 triggers=keywords[:3]  # Top 3 keywords as potential triggers
             )
         
+        vibe_map = {
+            'very_positive': {'color': '#4ade80', 'intensity': 1.0, 'glow': 'pulse'},
+            'positive': {'color': '#d9f99d', 'intensity': 0.7, 'glow': 'soft'},
+            'neutral': {'color': '#818cf8', 'intensity': 0.4, 'glow': 'steady'},
+            'negative': {'color': '#f87171', 'intensity': 0.7, 'glow': 'flicker'},
+            'very_negative': {'color': '#ef4444', 'intensity': 1.0, 'glow': 'heavy'}
+        }
+        
+        # Override color based on specific dominant emotion if available
+        if analysis['emotions']:
+            dom_emotion = max(analysis['emotions'].items(), key=lambda x: x[1])[0]
+            emotion_colors = {
+                'joy': '#fbbf24', 'gratitude': '#34d399', 'anxiety': '#818cf8',
+                'depression': '#475569', 'anger': '#f43f5e'
+            }
+            if dom_emotion in emotion_colors:
+                vibe_map[analysis['sentiment_label']]['color'] = emotion_colors[dom_emotion]
+
         response_data = {
             "reply": bot_reply,
             "message_type": reply_type,
+            "vibe": vibe_map.get(analysis['sentiment_label'], vibe_map['neutral']),
             "metadata": {
                 k: v for k, v in metadata.items() 
-                if k not in ['sentiment_analysis']  # Don't expose internal analysis
+                if k not in ['sentiment_analysis']
             },
             "new_achievements": [ach.to_dict() for ach in new_achievements],
             "session_id": str(session.session_id)

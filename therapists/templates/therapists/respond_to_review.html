@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="min-h-screen flex items-center justify-center px-6">
+    <div class="max-w-2xl w-full">
+        <div class="p-12 rounded-[40px] bg-white/[0.02] backdrop-blur-3xl border border-white/5 reveal">
+            <h4 class="text-[10px] font-unbounded font-black text-bloom-neon uppercase tracking-[0.4em] mb-4 text-center">Protocol Response</h4>
+            <h1 class="text-3xl md:text-4xl font-unbounded font-black text-white uppercase mb-8 text-center">
+                RESONANCE <span class="text-white/40">UPLINK.</span>
+            </h1>
+
+            <!-- Original Review -->
+            <div class="p-8 rounded-3xl bg-white/5 border border-white/5 mb-10">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-widest">Incoming Resonance</span>
+                    <div class="flex text-bloom-neon text-[8px]">
+                        {% for i in "12345" %}
+                        <i class="{% if forloop.counter <= review.rating %}fas{% else %}far{% endif %} fa-star"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                <p class="text-white/60 font-syne italic leading-relaxed">"{{ review.review_text }}"</p>
+            </div>
+
+            <form method="POST" class="space-y-8">
+                {% csrf_token %}
+                
+                <div class="space-y-4 text-left">
+                    <label class="block text-[10px] font-unbounded font-black text-white/40 uppercase tracking-widest pl-2">Clinical Response</label>
+                    <textarea name="response" class="w-full bg-white/10 border border-white/5 rounded-2xl p-6 text-white font-syne focus:outline-none focus:border-bloom-neon/50 h-48" placeholder="Enter clinical acknowledgment or session reflection..." required></textarea>
+                </div>
+
+                <div class="flex flex-col gap-4 pt-6">
+                    <button type="submit" class="h-16 w-full bg-bloom-neon text-bloom-dark rounded-2xl font-unbounded text-xs font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+                        Commit Response
+                    </button>
+                    <a href="{% url 'therapists:therapist_dashboard' %}" class="h-16 w-full rounded-2xl flex items-center justify-center font-unbounded text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all">
+                        Abort Protocol
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const reveal = () => {
+            const el = document.querySelector('.reveal');
+            el.classList.add('opacity-100', 'translate-y-0');
+            el.classList.remove('opacity-0', 'translate-y-8');
+        };
+        const el = document.querySelector('.reveal');
+        el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-1000', 'ease-out');
+        setTimeout(reveal, 100);
+    });
+</script>
+{% endblock %}

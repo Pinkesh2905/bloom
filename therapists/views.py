@@ -58,6 +58,7 @@ def therapist_list(request):
                 Q(user__first_name__icontains=search_query) |
                 Q(user__last_name__icontains=search_query) |
                 Q(bio__icontains=search_query) |
+                Q(specialty_title__icontains=search_query) |
                 Q(specializations__icontains=search_query)
             )
         
@@ -826,3 +827,26 @@ def update_patient_profile(request):
     }
     
     return render(request, 'therapists/update_patient_profile.html', context)
+
+@login_required
+@user_is_regular
+def patient_appointments(request):
+    """View for patients to see their upcoming and past appointments"""
+    now = timezone.now()
+    appointments = Appointment.objects.filter(patient=request.user).order_by('date', 'time')
+    
+    upcoming = appointments.filter(
+        Q(date__gt=now.date()) | Q(date=now.date(), time__gte=now.time()),
+        status__in=['PENDING', 'CONFIRMED']
+    )
+    
+    past = appointments.filter(
+        Q(date__lt=now.date()) | Q(date=now.date(), time__lt=now.time()) | Q(status__in=['COMPLETED', 'CANCELLED_BY_PATIENT', 'CANCELLED_BY_THERAPIST'])
+    ).order_by('-date', '-time')
+    
+    context = {
+        'upcoming_appointments': upcoming,
+        'past_appointments': past,
+        'now': now
+    }
+    return render(request, 'therapists/patient_appointments.html', context)

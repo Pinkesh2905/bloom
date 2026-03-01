@@ -1,0 +1,132 @@
+/* 
+   Bloom Core Design System 
+   Aesthetics: Zen-Premium, Modern, Peaceful
+*/
+
+:root {
+  /* Zen Color Palette */
+  --color-sage-50: #f1f8e9;
+  --color-sage-100: #dcedc8;
+  --color-sage-500: #8bc34a;
+  --color-sage-600: #7cb342;
+
+  --color-lavender-50: #f3e5f5;
+  --color-lavender-100: #e1bee7;
+  --color-lavender-500: #9c27b0;
+
+  --color-indigo-900: #1a237e;
+  --color-indigo-950: #0d1137;
+
+  --color-cream: #fffdee;
+
+  /* Redesign Tokens */
+  --bloom-primary: #7c3aed;
+  /* Re-using a refined purple */
+  --bloom-secondary-sage: #84cc16;
+  --bloom-bg-soft: #fafafa;
+
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+body.dark {
+  --bloom-bg-soft: #0f172a;
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+/* Global Transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Hyper-Modern Typography */
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Unbounded', cursive;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.3);
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.5);
+}
+
+/* Logo Animation */
+.logo-bloom svg {
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-bloom:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.bloom-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bloom-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: rgba(217, 249, 157, 0.4);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Iridescent Text */
+.text-iridescent {
+  background: linear-gradient(to right,
+      #818cf8,
+      #d9f99d 25%,
+      #fb7185 50%,
+      #818cf8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}

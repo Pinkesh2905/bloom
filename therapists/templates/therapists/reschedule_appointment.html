@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 32px;
+        padding: 3rem;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+    }
+
+    .calendar-day {
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.02);
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .calendar-day:hover:not(.unavailable) {
+        background: rgba(255, 255, 255, 0.06);
+        color: white;
+    }
+
+    .calendar-day.selected {
+        background: #d9f99d;
+        color: #0f172a;
+        box-shadow: 0 0 20px rgba(217, 249, 157, 0.3);
+    }
+
+    .calendar-day.unavailable {
+        opacity: 0.1;
+        cursor: not-allowed;
+    }
+
+    .time-slot {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .time-slot:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .time-slot.selected {
+        background: rgba(217, 249, 157, 0.1);
+        border-color: #d9f99d;
+        color: #d9f99d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="glass-card reveal">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-unbounded font-black text-white uppercase mb-4">
+                    TEMPORAL <span class="text-bloom-neon">RE-ALIGNMENT.</span>
+                </h1>
+                <p class="text-white/40 font-syne text-lg">Rescheduling session with Dr. {{ appointment.therapist.user.last_name }}.</p>
+            </div>
+
+            <form method="POST" id="reschedule-form" class="space-y-12">
+                {% csrf_token %}
+                <input type="hidden" name="new_date" id="selected_date">
+                <input type="hidden" name="new_time" id="selected_time">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Calendar -->
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-[10px] font-unbounded font-black text-white uppercase tracking-[0.2em]" id="month-display">Temporal Matrix</h3>
+                            <div class="flex gap-2">
+                                <button type="button" id="prev-month" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10"><i class="fas fa-chevron-left text-[10px]"></i></button>
+                                <button type="button" id="next-month" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center hover:bg-white/10"><i class="fas fa-chevron-right text-[10px]"></i></button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-days"></div>
+                    </div>
+
+                    <!-- Slots -->
+                    <div>
+                        <h3 class="text-[10px] font-unbounded font-black text-white uppercase tracking-[0.2em] mb-6">Available Slots</h3>
+                        <div id="slots-container" class="grid grid-cols-2 gap-3">
+                            <p class="col-span-2 text-center py-12 text-[10px] font-black text-white/10 uppercase tracking-widest">Select a temporal node</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-white/5">
+                    <label class="block text-[10px] font-unbounded font-black text-white/20 uppercase tracking-widest mb-4">Alignment Logic (Reason)</label>
+                    <textarea name="reason" class="w-full bg-white/20 backdrop-blur-3xl border border-white/10 rounded-2xl p-6 text-white font-syne focus:outline-none focus:border-bloom-neon/50 h-32" placeholder="Describe the reason for temporal shift..."></textarea>
+                </div>
+
+                <div class="flex justify-between items-center pt-6">
+                    <a href="{% url 'profile' %}" class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-widest hover:text-white transition-colors">Abort Delta</a>
+                    <button type="submit" class="px-12 h-16 bg-bloom-neon text-bloom-dark rounded-2xl font-unbounded text-xs font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+                        Execute Re-Alignment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    const availabilityData = {{ availability_data|safe }};
+    let currentDate = new Date();
+
+    const calendar = {
+        render() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            document.getElementById('month-display').textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date().setHours(0,0,0,0);
+            
+            const container = document.getElementById('calendar-days');
+            container.innerHTML = '';
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day unavailable';
+                container.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(year, month, d);
+                const dateStr = date.toISOString().split('T')[0];
+                const isPast = date < today;
+                const slots = availabilityData[dateStr] || [];
+                
+                const el = document.createElement('div');
+                el.className = `calendar-day ${isPast || slots.length === 0 ? 'unavailable' : ''}`;
+                el.textContent = d;
+                
+                if (!isPast && slots.length > 0) {
+                    el.onclick = () => this.selectDate(dateStr, el);
+                }
+                container.appendChild(el);
+            }
+        },
+
+        selectDate(dateStr, el) {
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('selected_date').value = dateStr;
+            this.loadSlots(dateStr);
+        },
+
+        loadSlots(dateStr) {
+            const container = document.getElementById('slots-container');
+            const slots = availabilityData[dateStr] || [];
+            container.innerHTML = slots.map(s => `
+                <div class="time-slot" onclick="selectSlot('${s}', this)">${s}</div>
+            `).join('');
+        }
+    };
+
+    function selectSlot(time, el) {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('selected_time').value = time;
+    }
+
+    document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); calendar.render(); };
+    document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); calendar.render(); };
+
+    document.addEventListener('DOMContentLoaded', () => calendar.render());
+</script>
+{% endblock %}

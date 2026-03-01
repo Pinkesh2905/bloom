@@ -62,6 +62,7 @@ class TherapistProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='therapist_profile')
     license_number = models.CharField(max_length=50, help_text="Professional license number")
+    specialty_title = models.CharField(max_length=100, blank=True, help_text="Specific professional title (e.g., Clinical Neuropsychologist)")
     specializations = models.JSONField(default=list, help_text="List of specializations")
     qualifications = models.JSONField(default=list, help_text="Educational qualifications")
     languages_spoken = models.JSONField(default=list, help_text="Languages spoken")
@@ -69,6 +70,8 @@ class TherapistProfile(models.Model):
     bio = models.TextField(help_text="Professional biography (max 1000 characters)", max_length=1000)
     years_experience = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(60)])
     profile_picture = models.ImageField(upload_to='therapist_pics/', default='therapist_pics/default.png')
+    featured_image = models.ImageField(upload_to='therapist_featured/', default='therapist_featured/default.png', help_text="Cinematic featured image for profile header")
+    video_intro_url = models.URLField(blank=True, null=True, help_text="Link to a video introduction (YouTube/Vimeo)")
     
     # Pricing and availability
     hourly_rate = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
@@ -80,6 +83,7 @@ class TherapistProfile(models.Model):
     phone_number = models.CharField(max_length=20, blank=True)
     office_address = models.TextField(blank=True, help_text="Office address for in-person sessions")
     timezone = models.CharField(max_length=50, default='UTC')  # This field name conflicts with the import
+    social_links = models.JSONField(default=dict, blank=True, help_text="Social media links (e.g., {'linkedin': '...', 'twitter': '...'})")
     
     # Platform settings
     offers_video_sessions = models.BooleanField(default=True)

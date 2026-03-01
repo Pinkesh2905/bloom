@@ -52,6 +52,15 @@ class TherapistSignUpForm(UserCreationForm):
             'placeholder': 'Enter your license number'
         })
     )
+    specialty_title = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-3 rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500 transition',
+            'placeholder': 'e.g., Clinical Neuropsychologist'
+        }),
+        help_text="Your specific professional title or specialty"
+    )
     specializations = forms.MultipleChoiceField(
         choices=TherapistProfile.SPECIALIZATION_CHOICES,
         widget=forms.CheckboxSelectMultiple(),
@@ -202,10 +211,10 @@ class TherapistSignUpForm(UserCreationForm):
         if commit:
             user.save()
             
-            # Create the associated TherapistProfile
             TherapistProfile.objects.create(
                 user=user,
                 license_number=self.cleaned_data['license_number'],
+                specialty_title=self.cleaned_data['specialty_title'],
                 specializations=self.cleaned_data['specializations'],
                 qualifications=self.cleaned_data['qualifications'],
                 languages_spoken=self.cleaned_data['languages_spoken'],
@@ -232,7 +241,7 @@ class TherapistProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = TherapistProfile
         fields = [
-            'bio', 'specializations', 'qualifications', 'languages_spoken',
+            'bio', 'specialty_title', 'specializations', 'qualifications', 'languages_spoken',
             'years_experience', 'hourly_rate', 'session_duration', 'phone_number',
             'office_address', 'timezone', 'offers_video_sessions', 'offers_chat_sessions',
             'offers_phone_sessions', 'offers_in_person', 'accepts_insurance',

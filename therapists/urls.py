@@ -32,6 +32,7 @@ urlpatterns = [
     
     # Patient profile management
     path('profile/update/', views.update_patient_profile, name='update_patient_profile'),
+    path('my-appointments/', views.patient_appointments, name='patient_appointments'),
     
     # API endpoints
     path('api/availability/<int:therapist_id>/', views.get_availability, name='get_availability'),

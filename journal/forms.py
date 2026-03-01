@@ -15,7 +15,11 @@ class JournalEntryForm(forms.ModelForm):
         model = JournalEntry
         # The actual 'tags' ManyToManyField is excluded from the form's direct control.
         # It will be handled manually in the view.
-        fields = ['title', 'content', 'mood', 'is_favorite']
+        fields = ['title', 'content', 'mood', 'mood_intensity', 'image_attachment', 'is_favorite']
+        widgets = {
+            'mood_intensity': forms.NumberInput(attrs={'type': 'range', 'min': '1', 'max': '10', 'class': 'w-full'}),
+            'content': forms.Textarea(attrs={'rows': 5, 'placeholder': "What's on your mind?"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

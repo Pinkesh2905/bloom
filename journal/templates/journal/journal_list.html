@@ -1,210 +1,185 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-    body {
-        background-color: #f8f9fa;
+    .mood-gradient-HAPPY { background: linear-gradient(135deg, rgba(255, 236, 179, 0.1), rgba(255, 193, 7, 0.05)); border-left: 4px solid #FFC107; }
+    .mood-gradient-NEUTRAL { background: linear-gradient(135deg, rgba(224, 224, 224, 0.1), rgba(158, 158, 158, 0.05)); border-left: 4px solid #9E9E9E; }
+    .mood-gradient-SAD { background: linear-gradient(135deg, rgba(187, 222, 251, 0.1), rgba(33, 150, 243, 0.05)); border-left: 4px solid #2196F3; }
+    .mood-gradient-EXCITED { background: linear-gradient(135deg, rgba(248, 187, 208, 0.1), rgba(233, 30, 99, 0.05)); border-left: 4px solid #E91E63; }
+    .mood-gradient-CALM { background: linear-gradient(135deg, rgba(200, 230, 201, 0.1), rgba(76, 175, 80, 0.05)); border-left: 4px solid #4CAF50; }
+    
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .journal-container {
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 2rem;
-    }
-    .journal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .journal-header h2 {
-        font-size: 2.5rem;
-        color: #343a40;
-        margin: 0;
-    }
-    .add-btn {
-        background-color: #007bff;
-        color: white;
-        padding: 0.7rem 1.5rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: background-color 0.2s;
-    }
-    .add-btn:hover {
-        background-color: #0056b3;
-    }
-    .filters-container {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-    .search-form {
-        flex-grow: 1;
-    }
-    .search-input {
-        width: 100%;
-        padding: 0.7rem 1rem;
-        border: 1px solid #ced4da;
-        border-radius: 8px;
-        font-size: 1rem;
-    }
-    .tags-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
-    }
-    .tag-link {
-        background-color: #e9ecef;
-        color: #495057;
-        padding: 0.4rem 0.8rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: background-color 0.2s;
-    }
-    .tag-link:hover, .tag-link.active {
-        background-color: #6c757d;
-        color: white;
-    }
-    .journal-entry {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border-left: 5px solid #007bff;
-    }
-    .entry-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-    }
-    .journal-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-    .journal-meta {
-        font-size: 0.85rem;
-        color: #6c757d;
-        margin-bottom: 1rem;
-    }
-    .journal-content {
-        color: #555;
-        line-height: 1.6;
-    }
-    .entry-footer {
-        margin-top: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .entry-tags a {
-        margin-right: 0.5rem;
-    }
-    .entry-actions a {
-        margin-left: 1rem;
-        color: #007bff;
-        text-decoration: none;
-    }
-    .entry-actions a:hover {
-        text-decoration: underline;
-    }
-    .pagination {
-        justify-content: center;
-        margin-top: 2rem;
+    .glass-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 </style>
-
-<div class="journal-container">
-    <div class="journal-header">
-        <h2>📝 My Journal</h2>
-        <a class="add-btn" href="{% url 'journal_create' %}">➕ Add New Entry</a>
-    </div>
-
-    <!-- Filters Section -->
-    <div class="filters-container">
-        <form class="search-form" method="get" action="{% url 'journal_list' %}">
-            <input class="search-input" type="text" name="q" value="{{ search_query }}" placeholder="Search entries...">
-        </form>
-        <div class="tags-list">
-            <strong>Filter by Tag:</strong>
-            {% for tag in all_tags %}
-                {# This is the corrected link #}
-                <a href="{% url 'journal_list' %}?tag={{ tag.name }}"
-                   class="tag-link {% if tag_filter == tag.name %}active{% endif %}">
-                    {{ tag.name }}
-                </a>
-            {% endfor %}
-            {% if tag_filter %}
-                <a href="{% url 'journal_list' %}" class="tag-link">Clear</a>
-            {% endif %}
-        </div>
-    </div>
-
-    {% for entry in entries %}
-    <div class="journal-entry">
-        <div class="entry-header">
-            <a href="{{ entry.get_absolute_url }}" style="text-decoration: none;">
-                <h3 class="journal-title">{{ entry.title }}</h3>
-            </a>
-            <div class="entry-actions">
-                <a href="{% url 'journal_edit' entry.pk %}">✏️ Edit</a>
-                <a href="{% url 'journal_delete' entry.pk %}">🗑️ Delete</a>
-            </div>
-        </div>
-        <div class="journal-meta">
-            {{ entry.date_created|date:"F d, Y" }} | {{ entry.mood }}
-            {% if entry.is_favorite %}⭐{% endif %}
-        </div>
-        <div class="journal-content">
-            {{ entry.content|truncatewords:50|linebreaks }}
-        </div>
-        <div class="entry-footer">
-            <div class="entry-tags">
-                {% for tag in entry.tags.all %}
-                     <a href="{% url 'journal_list' %}?tag={{ tag.name }}" class="tag-link">{{ tag.name }}</a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% empty %}
-    <p style="text-align: center; color: #888; padding: 2rem;">No journal entries yet. Start writing your thoughts today!</p>
-    {% endfor %}
-
-    <!-- Pagination -->
-    {% if is_paginated %}
-    <nav>
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Previous</span></li>
-            {% endif %}
-
-            {% for i in paginator.page_range %}
-                {% if page_obj.number == i %}
-                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">Next</span></li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
-
-</div>
 {% endblock %}
 
+{% block content %}
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden rounded-[3rem] bg-indigo-950/40 border border-white/5 p-12 mb-16 reveal">
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="max-w-2xl">
+                <span class="inline-block px-4 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold tracking-widest uppercase mb-4">Personal Haven</span>
+                <h1 class="text-6xl font-black text-white mb-4 tracking-tighter">Your Mind, <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">Archived.</span></h1>
+                <p class="text-indigo-200/60 text-lg mb-8">A sanctuary for self-reflection powered by neuro-centric AI insights.</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="{% url 'journal_create' %}" class="px-8 py-4 bg-white text-indigo-950 font-black rounded-2xl hover:bg-indigo-50 transition-all flex items-center gap-3">
+                        <i class="fas fa-plus"></i> New Transmission
+                    </a>
+                    <a href="{% url 'mood_analytics' %}" class="px-8 py-4 bg-indigo-500/20 text-white border border-white/10 font-bold rounded-2xl hover:bg-white/10 transition-all flex items-center gap-3">
+                        <i class="fas fa-chart-line"></i> Analytics Console
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hidden lg:grid grid-cols-2 gap-4">
+                <div class="glass-card p-6 rounded-3xl text-center">
+                    <div class="text-3xl font-black text-white">{{ total_entries }}</div>
+                    <div class="text-xs text-indigo-300/50 uppercase tracking-widest font-bold">Reflections</div>
+                </div>
+                <div class="glass-card p-6 rounded-3xl text-center">
+                    <div class="text-3xl font-black text-emerald-400">{{ all_tags.count }}</div>
+                    <div class="text-xs text-indigo-300/50 uppercase tracking-widest font-bold">Tags</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid lg:grid-cols-4 gap-12">
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-12 reveal">
+            <!-- Search -->
+            <div class="glass-card p-8 rounded-[2rem]">
+                <h4 class="text-white font-black text-sm uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Neuro-Search</h4>
+                <form method="get" action="{% url 'journal_list' %}" class="relative">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Filter thoughts..." 
+                           class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-indigo-300/30 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-indigo-300/30"></i>
+                </form>
+            </div>
+
+            <!-- Mood Tracker Mini -->
+            <div class="glass-card p-8 rounded-[2rem]">
+                <h4 class="text-white font-black text-sm uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Emotional Spectrum</h4>
+                <div class="space-y-4">
+                    {% for stat in mood_stats %}
+                    <div class="flex items-center justify-between group">
+                        <span class="text-indigo-200/60 text-sm group-hover:text-white transition-colors">{{ stat.mood }}</span>
+                        <div class="h-2 flex-grow mx-4 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-500/60 rounded-full" style="width: {% widthratio stat.count total_entries 100 %}%"></div>
+                        </div>
+                        <span class="text-indigo-400 font-bold text-xs">{{ stat.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Tags Cloud -->
+            <div class="glass-card p-8 rounded-[2rem]">
+                <h4 class="text-white font-black text-sm uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Concept Cloud</h4>
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in all_tags %}
+                    <a href="{% url 'journal_list' %}?tag={{ tag.name }}" 
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition-all {% if tag_filter == tag.name %}bg-white text-indigo-900 shadow-[0_0_20px_rgba(255,255,255,0.2)]{% else %}bg-white/5 text-indigo-200/60 hover:bg-white/10 hover:text-white{% endif %}">
+                        #{{ tag.name }}
+                    </a>
+                    {% endfor %}
+                    {% if tag_filter %}
+                    <a href="{% url 'journal_list' %}" class="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-xl text-xs font-bold hover:bg-rose-500/30 transition-all">Reset</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Entries Feed -->
+        <div class="lg:col-span-3">
+            <div class="grid md:grid-cols-2 gap-8">
+                {% for entry in entries %}
+                <div class="glass-card p-8 rounded-[2.5rem] mood-gradient-{{ entry.mood }} group relative overflow-hidden reveal">
+                    {% if entry.image_attachment %}
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-3xl overflow-hidden opacity-30 group-hover:opacity-100 transition-opacity">
+                        <img src="{{ entry.image_attachment.url }}" alt="Attachment" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="text-[10px] font-black tracking-[0.2em] text-indigo-300/50 uppercase">{{ entry.date_created|date:"M d, Y" }}</div>
+                            <div class="flex gap-3 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+                                <a href="{% url 'journal_edit' entry.pk %}" class="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center text-white hover:bg-indigo-500 transition-all">
+                                    <i class="fas fa-pen text-xs"></i>
+                                </a>
+                                <a href="{% url 'journal_delete' entry.pk %}" class="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center text-rose-400 hover:bg-rose-500 hover:text-white transition-all">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-2xl font-black text-white mb-4 leading-tight group-hover:text-indigo-400 transition-colors">
+                            <a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+                        </h3>
+                        
+                        <div class="text-indigo-200/60 leading-relaxed text-sm mb-8 line-clamp-3 font-medium">
+                            {{ entry.content }}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-6 border-t border-white/5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Sentiment: {{ entry.sentiment_score|floatformat:1 }}</span>
+                            </div>
+                            {% if entry.is_favorite %}
+                            <i class="fas fa-star text-amber-400 text-xs"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-24 text-center glass-card rounded-[3rem] reveal">
+                    <div class="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10">
+                        <i class="fas fa-feather-alt text-4xl text-indigo-400/30"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">Silent Waves.</h3>
+                    <p class="text-indigo-200/40 font-medium">No transmissions found in this neural sector.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="mt-20 flex justify-center items-center gap-6 reveal">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if tag_filter %}&tag={{ tag_filter }}{% endif %}" 
+                       class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white hover:text-indigo-950 transition-all">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                {% endif %}
+                
+                <span class="text-white/30 font-black text-xs uppercase tracking-[0.3em]">Sector {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if tag_filter %}&tag={{ tag_filter }}{% endif %}" 
+                       class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white hover:text-indigo-950 transition-all">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 40px;
+        padding: 4rem;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        color: white;
+        padding: 1.25rem 1.75rem;
+        width: 100%;
+        font-family: 'Syne', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #d9f99d;
+        outline: none;
+        box-shadow: 0 0 20px rgba(217, 249, 157, 0.1);
+    }
+
+    .form-label {
+        display: block;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: rgba(255, 255, 255, 0.3);
+        margin-bottom: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="min-h-screen pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="glass-card reveal">
+            <div class="text-center mb-12">
+                <h4 class="text-[10px] font-unbounded font-black text-bloom-neon uppercase tracking-[0.4em] mb-4">Patient Profile</h4>
+                <h1 class="text-4xl md:text-5xl font-unbounded font-black text-white uppercase mb-4">
+                    PROFILE <span class="text-white/40">CALIBRATION.</span>
+                </h1>
+                <p class="text-white/30 font-syne text-lg">Update your neural signature and session preferences.</p>
+            </div>
+
+            <form method="POST" class="space-y-10">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="form-label">Phone Uplink</label>
+                        {{ form.phone_number }}
+                    </div>
+                    <div class="space-y-4">
+                        <label class="form-label">Chronos Date (Birth)</label>
+                        {{ form.date_of_birth }}
+                    </div>
+                    <div class="md:col-span-2 space-y-4">
+                        <label class="form-label">Emergency Protocol Contact</label>
+                        {{ form.emergency_contact_name }}
+                    </div>
+                    <div class="md:col-span-2 space-y-4">
+                        <label class="form-label">Emergency Node Link (Phone)</label>
+                        {{ form.emergency_contact_phone }}
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-white/5 space-y-6">
+                    <h5 class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-widest">Medical Context</h5>
+                    <div class="grid grid-cols-1 gap-8">
+                        <div class="space-y-4">
+                            <label class="form-label">Neural History (Medical History)</label>
+                            {{ form.medical_history }}
+                        </div>
+                        <div class="space-y-4">
+                            <label class="form-label">Session Intent (Current Concerns)</label>
+                            {{ form.current_concerns }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-8">
+                    <a href="{% url 'profile' %}" class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-widest hover:text-white transition-colors">Abort Sync</a>
+                    <button type="submit" class="px-16 h-18 bg-bloom-neon text-bloom-dark rounded-2xl font-unbounded text-xs font-black uppercase tracking-widest shadow-[0_20px_40px_rgba(217,249,157,0.2)] hover:scale-105 transition-all">
+                        Update Protocol
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            if (input.type !== 'checkbox' && input.type !== 'radio') {
+                input.classList.add('form-input');
+            }
+        });
+
+        const reveal = () => {
+            const el = document.querySelector('.reveal');
+            el.classList.add('opacity-100', 'translate-y-0');
+            el.classList.remove('opacity-0', 'translate-y-8');
+        };
+        const el = document.querySelector('.reveal');
+        el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-1000', 'ease-out');
+        setTimeout(reveal, 100);
+    });
+</script>
+{% endblock %}

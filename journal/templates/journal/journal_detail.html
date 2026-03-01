@@ -1,137 +1,119 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .journal-hero {
+        background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    }
+    .reflection-glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .mood-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    .mood-HAPPY { background-color: #FFC107; box-shadow: 0 0 15px #FFC107; }
+    .mood-NEUTRAL { background-color: #9E9E9E; box-shadow: 0 0 15px #9E9E9E; }
+    .mood-SAD { background-color: #2196F3; box-shadow: 0 0 15px #2196F3; }
+    .mood-EXCITED { background-color: #E91E63; box-shadow: 0 0 15px #E91E63; }
+    .mood-CALM { background-color: #4CAF50; box-shadow: 0 0 15px #4CAF50; }
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .detail-container {
-        max-width: 800px;
-        margin: 3rem auto;
-        padding: 2.5rem;
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
-    }
-    .detail-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #e9ecef;
-        padding-bottom: 1.5rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .entry-title {
-        font-size: 2.5rem;
-        color: #343a40;
-        margin: 0;
-        font-weight: 700;
-    }
-    .actions {
-        display: flex;
-        gap: 0.75rem;
-    }
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.2s;
-        border: none;
-    }
-    .btn-edit {
-        background-color: #ffc107;
-        color: #212529;
-    }
-    .btn-edit:hover {
-        background-color: #e0a800;
-    }
-    .btn-delete {
-        background-color: #dc3545;
-        color: white;
-    }
-    .btn-delete:hover {
-        background-color: #c82333;
-    }
-    .detail-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        font-size: 0.9rem;
-        color: #6c757d;
-        margin-bottom: 2rem;
-    }
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .entry-content {
-        line-height: 1.7;
-        font-size: 1.1rem;
-        color: #495057;
-        margin-bottom: 2rem;
-    }
-    .entry-tags {
-        margin-bottom: 2rem;
-    }
-    .tag-link {
-        background-color: #e9ecef;
-        color: #495057;
-        padding: 0.4rem 0.8rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        margin-right: 0.5rem;
-        display: inline-block;
-        margin-bottom: 0.5rem;
-    }
-    .back-link {
-        text-align: center;
-        margin-top: 2rem;
-    }
-    .back-link a {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: 500;
-    }
-</style>
-
-<div class="detail-container">
-    <div class="detail-header">
-        <h1 class="entry-title">{{ object.title }}</h1>
-        <div class="actions">
-            {# The context variable in a DetailView is `object` by default, so we use object.pk #}
-            <a href="{% url 'journal_edit' object.pk %}" class="btn btn-edit">✏️ Edit</a>
-            <a href="{% url 'journal_delete' object.pk %}" class="btn btn-delete">🗑️ Delete</a>
+<div class="min-h-screen journal-hero py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Navigation -->
+        <div class="mb-12 reveal">
+            <a href="{% url 'journal_list' %}" class="inline-flex items-center gap-2 text-indigo-300/50 hover:text-white transition-colors group">
+                <i class="fas fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+                <span class="text-xs font-black uppercase tracking-widest">Return to Archive</span>
+            </a>
         </div>
-    </div>
 
-    <div class="detail-meta">
-        <div class="meta-item">🗓️ <strong>Created:</strong> {{ object.date_created|date:"F d, Y, P" }}</div>
-        <div class="meta-item">🔄 <strong>Updated:</strong> {{ object.date_updated|date:"F d, Y, P" }}</div>
-        <div class="meta-item">🎭 <strong>Mood:</strong> {{ object.get_mood_display }}</div>
-        <div class="meta-item">⭐ <strong>Favorite:</strong> {{ object.is_favorite|yesno:"Yes,No" }}</div>
-    </div>
+        <!-- Main Content -->
+        <article class="reveal">
+            <!-- Header -->
+            <header class="mb-16 text-center">
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <span class="mood-indicator mood-{{ object.mood }}"></span>
+                    <span class="text-xs font-black text-indigo-300 uppercase tracking-[0.3em]">{{ object.mood }} • Intensity {{ object.mood_intensity }}/10</span>
+                </div>
+                <h1 class="text-6xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-tight">{{ object.title }}</h1>
+                <div class="flex items-center justify-center gap-6 text-indigo-300/40 font-bold text-sm">
+                    <span>{{ object.date_created|date:"F d, Y" }}</span>
+                    <span class="w-1 h-1 bg-white/10 rounded-full"></span>
+                    <span>{{ object.content|wordcount }} Words</span>
+                </div>
+            </header>
 
-    <div class="entry-content">
-        {{ object.content|linebreaks }}
-    </div>
+            <!-- Attachment (if any) -->
+            {% if object.image_attachment %}
+            <div class="mb-16 rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl reveal">
+                <img src="{{ object.image_attachment.url }}" alt="Memory Attachment" class="w-full h-auto grayscale-50 hover:grayscale-0 transition-all duration-700">
+            </div>
+            {% endif %}
 
-    {% if object.tags.all %}
-    <div class="entry-tags">
-        <strong>Tags:</strong>
-        {% for tag in object.tags.all %}
-            <a href="{% url 'journal_list' %}?tag={{ tag.name }}" class="tag-link">{{ tag.name }}</a>
-        {% endfor %}
-    </div>
-    {% endif %}
+            <!-- Entry Body -->
+            <div class="reflection-glass p-12 md:p-20 rounded-[3rem] mb-12">
+                <div class="prose prose-invert prose-xl max-w-none text-indigo-100/80 leading-relaxed font-medium">
+                    {{ object.content|linebreaks }}
+                </div>
+                
+                <!-- Tags -->
+                <div class="mt-16 flex flex-wrap gap-3 pt-12 border-t border-white/5">
+                    {% for tag in object.tags.all %}
+                    <span class="px-5 py-2 rounded-xl bg-white/5 text-xs font-black text-indigo-300 uppercase tracking-widest border border-white/5">#{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
 
-    <div class="back-link">
-        <a href="{% url 'journal_list' %}">← Back to All Entries</a>
+            <!-- AI Reflection Module -->
+            <div class="grid md:grid-cols-2 gap-8 mb-20 reveal">
+                <div class="reflection-glass p-10 rounded-[2.5rem] border-l-4 border-emerald-500/50">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <i class="fas fa-brain text-xs"></i>
+                        </div>
+                        <h4 class="text-xs font-black text-white uppercase tracking-widest">Neural Reflection</h4>
+                    </div>
+                    <p class="text-indigo-200/60 leading-relaxed italic text-lg">"{{ object.ai_reflection }}"</p>
+                </div>
+
+                <div class="reflection-glass p-10 rounded-[2.5rem] border-l-4 border-indigo-500/50">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                            <i class="fas fa-fingerprint text-xs"></i>
+                        </div>
+                        <h4 class="text-xs font-black text-white uppercase tracking-widest">Sentiment Index</h4>
+                    </div>
+                    <div class="flex items-end gap-2 mb-2">
+                        <span class="text-4xl font-black text-white">{{ object.sentiment_score|floatformat:2 }}</span>
+                        <span class="text-indigo-300/30 text-xs font-bold mb-1">/ 1.00</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-rose-500 via-indigo-500 to-emerald-500" style="width: {{ sentiment_percentage }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-center gap-6 reveal">
+                <a href="{% url 'journal_edit' object.pk %}" class="px-10 py-5 bg-white text-indigo-950 font-black rounded-2xl hover:bg-indigo-50 transition-all flex items-center gap-3">
+                    <i class="fas fa-pen-nib"></i> Edit Reflection
+                </a>
+                <a href="{% url 'journal_delete' object.pk %}" class="px-10 py-5 bg-rose-500/10 text-rose-400 border border-rose-500/20 font-black rounded-2xl hover:bg-rose-500 hover:text-white transition-all">
+                    Delete Transmission
+                </a>
+            </div>
+        </article>
     </div>
 </div>
 {% endblock %}
-

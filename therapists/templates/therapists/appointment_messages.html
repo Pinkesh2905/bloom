@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .chat-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 0;
+        height: calc(100vh - 80px);
+        background: rgba(10, 15, 30, 0.4);
+        backdrop-filter: blur(40px);
+    }
+
+    .info-sidebar {
+        background: rgba(255, 255, 255, 0.02);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2.5rem;
+        overflow-y: auto;
+    }
+
+    .message-viewport {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .messages-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .message-bubble {
+        max-width: 70%;
+        padding: 1.25rem 1.75rem;
+        border-radius: 24px;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        position: relative;
+    }
+
+    .msg-received {
+        align-self: flex-start;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: white;
+        border-bottom-left-radius: 4px;
+    }
+
+    .msg-sent {
+        align-self: flex-end;
+        background: rgba(217, 249, 157, 0.1);
+        border: 1px solid rgba(217, 249, 157, 0.2);
+        color: #d9f99d;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-input-area {
+        padding: 2rem 3rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .glass-input {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 1.25rem 1.5rem;
+        color: white;
+        width: 100%;
+        font-family: 'Syne', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #d9f99d;
+        outline: none;
+    }
+
+    .therapist-badge {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 8px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: #d9f99d;
+        background: rgba(217, 249, 157, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    @media (max-width: 1024px) {
+        .chat-container { grid-template-columns: 1fr; }
+        .info-sidebar { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="bg-bloom-dark">
+    <div class="chat-container">
+        
+        <!-- Info Sidebar -->
+        <aside class="info-sidebar">
+            <div class="space-y-10">
+                <!-- Session Profile -->
+                <div>
+                    <h4 class="text-[10px] font-unbounded font-black text-white/20 uppercase tracking-[0.3em] mb-6">Active Node</h4>
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-unbounded text-2xl font-black text-bloom-neon">
+                            {% if request.user == appointment.patient %}{{ appointment.therapist.user.first_name|first }}{% else %}{{ appointment.patient.first_name|first }}{% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-unbounded font-black text-white">
+                                {% if request.user == appointment.patient %}
+                                    DR. {{ appointment.therapist.user.last_name }}
+                                {% else %}
+                                    {{ appointment.patient.get_full_name }}
+                                {% endif %}
+                            </h3>
+                            <p class="text-[10px] font-black text-bloom-neon uppercase tracking-widest">{% if request.user == appointment.patient %}CLINICAL GUIDE{% else %}SUBSCRIBER{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Meta -->
+                <div class="p-6 rounded-3xl bg-white/20 backdrop-blur-3xl border border-white/10">
+                    <h5 class="text-[9px] font-unbounded font-black text-white/40 uppercase tracking-widest mb-4">Protocol Meta</h5>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-white/30 uppercase font-black">Session Type</span>
+                            <span class="text-[10px] text-white font-black uppercase">{{ appointment.get_session_type_display }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-white/30 uppercase font-black">Timestamp</span>
+                            <span class="text-[10px] text-white font-black uppercase">{{ appointment.date|date:"m.d.y" }} @ {{ appointment.time|time:"H:i" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-white/30 uppercase font-black">Secure Link</span>
+                            <span class="w-2 h-2 rounded-full bg-bloom-neon animate-pulse shadow-[0_0_10px_#d9f99d]"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guidance -->
+                <div class="p-6">
+                    <p class="text-[10px] text-white/20 font-syne leading-relaxed uppercase tracking-wider">
+                        Neural Link is encrypted and stored in local memory vectors for session continuity.
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Viewport -->
+        <main class="message-viewport">
+            <!-- Messages Header (Mobile) -->
+            <div class="lg:hidden p-6 border-b border-white/5 flex items-center justify-between">
+                <h3 class="font-unbounded font-black text-white text-sm uppercase">Neural Link</h3>
+                <span class="therapist-badge">Secure Sync</span>
+            </div>
+
+            <!-- Scroll Area -->
+            <div class="messages-scroll" id="chat-messages">
+                {% for message in messages %}
+                <div class="flex flex-col {% if message.sender == request.user %}items-end{% else %}items-start{% endif %}">
+                    <div class="message-bubble {% if message.sender == request.user %}msg-sent{% else %}msg-received{% endif %}">
+                        {% if message.ai_generated %}
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[8px] font-black uppercase tracking-widest bg-bloom-neon text-bloom-dark px-1.5 py-0.5 rounded">AI Response</span>
+                            </div>
+                        {% endif %}
+                        <p>{{ message.content }}</p>
+                    </div>
+                    <span class="text-[8px] font-black text-white/20 uppercase tracking-widest mt-2 px-2">
+                        {{ message.created_at|time:"H:i" }} · {% if message.is_read %}Synced{% else %}Transmitting{% endif %}
+                    </span>
+                </div>
+                {% empty %}
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <div class="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-8 border border-dashed border-white/10">
+                        <i class="fas fa-satellite text-white/10 text-3xl"></i>
+                    </div>
+                    <h4 class="text-sm font-unbounded font-black text-white/40 uppercase tracking-[0.3em]">Initialize Communication</h4>
+                    <p class="text-xs text-white/20 font-syne mt-4">Transmitting neural link data. Ready for input.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Input Area -->
+            <form method="POST" class="chat-input-area">
+                {% csrf_token %}
+                <div class="flex gap-4 items-center">
+                    <button type="button" class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-white transition-all">
+                        <i class="fas fa-paperclip text-lg"></i>
+                    </button>
+                    <div class="flex-1">
+                        <input type="text" name="content" placeholder="Enter message pulse..." class="glass-input" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="w-14 h-14 rounded-2xl bg-bloom-neon text-bloom-dark flex items-center justify-center hover:scale-105 transition-all shadow-[0_10px_30px_rgba(217,249,157,0.2)]">
+                        <i class="fas fa-paper-plane text-lg"></i>
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const scrollArea = document.getElementById('chat-messages');
+        scrollArea.scrollTop = scrollArea.scrollHeight;
+
+        // Auto-refresh logic placeholder
+        // setInterval(() => location.reload(), 30000);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        min-height: calc(100vh - 80px);
+    }
+
+    .glass-sidebar {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        position: sticky;
+        top: 80px;
+        height: calc(100vh - 80px);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 2.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 16px;
+        color: rgba(255, 255, 255, 0.4);
+        font-family: 'Unbounded', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+    }
+
+    .nav-link.active {
+        background: rgba(217, 249, 157, 0.1);
+        color: #d9f99d;
+    }
+
+    .form-input {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        color: white;
+        padding: 1rem 1.25rem;
+        width: 100%;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #d9f99d;
+        outline: none;
+        box-shadow: 0 0 20px rgba(217, 249, 157, 0.1);
+    }
+
+    .form-label {
+        display: block;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: rgba(255, 255, 255, 0.3);
+        margin-bottom: 0.75rem;
+    }
+
+    .section-header {
+        border-left: 4px solid #d9f99d;
+        padding-left: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 1024px) {
+        .dashboard-container { grid-template-columns: 1fr; }
+        .glass-sidebar { display: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="bg-bloom-dark pt-20">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-10">
+        <div class="dashboard-container">
+            
+            <!-- Sidebar -->
+            <aside class="glass-sidebar -ml-6 lg:-ml-10">
+                <div class="space-y-2">
+                    <a href="{% url 'therapists:therapist_dashboard' %}" class="nav-link">
+                        <i class="fas fa-th-large text-xs"></i> Command Center
+                    </a>
+                    <a href="{% url 'therapists:manage_schedule' %}" class="nav-link">
+                        <i class="fas fa-calendar-alt text-xs"></i> Chronos Logic
+                    </a>
+                    <a href="{% url 'therapists:therapist_appointments' %}" class="nav-link">
+                        <i class="fas fa-users text-xs"></i> Patient Nodes
+                    </a>
+                    <a href="{% url 'therapists:update_therapist_profile' %}" class="nav-link active">
+                        <i class="fas fa-user-cog text-xs"></i> Profile Apex
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <main class="py-10">
+                <div class="max-w-4xl space-y-12 reveal">
+                    
+                    <!-- Header -->
+                    <div>
+                        <h1 class="text-4xl md:text-5xl font-unbounded font-black text-white uppercase mb-2">
+                            PROFILE <span class="text-bloom-neon">APEX.</span>
+                        </h1>
+                        <p class="text-white/40 font-syne text-lg">Calibrate your clinical identity and session parameters.</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" class="space-y-10">
+                        {% csrf_token %}
+                        
+                        <!-- Core Identity -->
+                        <div class="glass-card">
+                            <div class="section-header">
+                                <h2 class="text-xl font-unbounded font-black text-white uppercase tracking-tight">Core Identity</h2>
+                                <p class="text-[10px] font-black text-white/20 uppercase tracking-widest mt-1">Fundamental clinical attributes</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="md:col-span-2 flex items-center gap-8 mb-4">
+                                    <div class="relative group">
+                                        <div class="w-24 h-24 rounded-3xl overflow-hidden border border-white/10 group-hover:border-bloom-neon/50 transition-all">
+                                            {% if therapist.profile_picture %}
+                                                <img src="{{ therapist.profile_picture.url }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                                <div class="w-full h-full bg-white/5 flex items-center justify-center">
+                                                    <i class="fas fa-user text-white/20 text-2xl"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-bloom-neon rounded-xl flex items-center justify-center text-bloom-dark text-xs cursor-pointer hover:scale-110 transition-transform">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                        {{ form.profile_picture }}
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-unbounded font-black text-white uppercase tracking-widest mb-1">Upload Sequence</p>
+                                        <p class="text-[10px] text-white/30 font-syne">Static image optimized for 1:1 aspect ratio.</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="form-label">Professional Bio</label>
+                                    {{ form.bio }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Calibration -->
+                        <div class="glass-card">
+                            <div class="section-header">
+                                <h2 class="text-xl font-unbounded font-black text-white uppercase tracking-tight">Calibration</h2>
+                                <p class="text-[10px] font-black text-white/20 uppercase tracking-widest mt-1">Specialization and experience metrics</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-2">
+                                    <label class="form-label">Specializations (JSON Sequence)</label>
+                                    {{ form.specializations }}
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="form-label">Years Exp.</label>
+                                        {{ form.years_experience }}
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="form-label">Investment Rate</label>
+                                        {{ form.hourly_rate }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Modules -->
+                        <div class="glass-card">
+                            <div class="section-header">
+                                <h2 class="text-xl font-unbounded font-black text-white uppercase tracking-tight">Modules</h2>
+                                <p class="text-[10px] font-black text-white/20 uppercase tracking-widest mt-1">Available communication protocols</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center gap-4 text-center">
+                                    <i class="fas fa-video text-bloom-neon"></i>
+                                    <label class="text-[9px] font-black text-white/40 uppercase tracking-widest">Video Link</label>
+                                    {{ form.offers_video_sessions }}
+                                </div>
+                                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center gap-4 text-center">
+                                    <i class="fas fa-comment-alt text-bloom-neon"></i>
+                                    <label class="text-[9px] font-black text-white/40 uppercase tracking-widest">Neural Chat</label>
+                                    {{ form.offers_chat_sessions }}
+                                </div>
+                                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center gap-4 text-center">
+                                    <i class="fas fa-phone text-bloom-neon"></i>
+                                    <label class="text-[9px] font-black text-white/40 uppercase tracking-widest">Audio Uplink</label>
+                                    {{ form.offers_phone_sessions }}
+                                </div>
+                                <div class="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center gap-4 text-center">
+                                    <i class="fas fa-map-marker-alt text-bloom-neon"></i>
+                                    <label class="text-[9px] font-black text-white/40 uppercase tracking-widest">Physical Node</label>
+                                    {{ form.offers_in_person }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Protocol -->
+                        <div class="flex justify-end pt-6">
+                            <button type="submit" class="h-16 px-12 bg-bloom-neon text-bloom-dark rounded-2xl font-unbounded text-xs font-black uppercase tracking-widest shadow-[0_20px_40px_rgba(217,249,157,0.15)] hover:scale-105 transition-all">
+                                Update Protocol
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Style all Django form widgets with Bloom classes
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]), select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-input');
+        });
+
+        // Hide the basic file input and trigger it from the camera icon
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.classList.add('hidden');
+
+        const reveal = () => {
+            const elements = document.querySelectorAll('.reveal');
+            elements.forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('opacity-100', 'translate-y-0');
+                    el.classList.remove('opacity-0', 'translate-y-8');
+                }, i * 150);
+            });
+        };
+        const els = document.querySelectorAll('.reveal');
+        els.forEach(el => el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-1000', 'ease-out'));
+        setTimeout(reveal, 100);
+    });
+</script>
+{% endblock %}

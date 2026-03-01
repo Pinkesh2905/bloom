@@ -25,6 +25,10 @@ class JournalEntry(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     mood = models.CharField(max_length=10, choices=Mood.choices, default=Mood.NEUTRAL)
+    mood_intensity = models.PositiveSmallIntegerField(default=5, help_text="Mood intensity from 1 to 10")
+    sentiment_score = models.FloatField(default=0.0, help_text="AI calculated sentiment score (-1 to 1)")
+    ai_reflection = models.TextField(blank=True, null=True, help_text="AI-generated reflection on the entry")
+    image_attachment = models.ImageField(upload_to='journal_attachments/', blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name='journal_entries')
     is_favorite = models.BooleanField(default=False)
 
